@@ -21,8 +21,9 @@ public class MainApp extends Application{
         Parent parent = loader.load();
         Group root = new Group();
         Scene scene = new Scene(parent,400,720);
+        scene.getStylesheets().add(getClass().getResource("/styles/primary.css").toExternalForm());
        
-        // stage setup
+        // stage setup 
         stage.setResizable(false); 
         stage.setScene(scene);
         stage.setTitle("PacketScope Desktop");
