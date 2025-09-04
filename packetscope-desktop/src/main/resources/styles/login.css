@@ -10,8 +10,19 @@
     -fx-font-family: "Michroma";
 }
 
+.error-message {
+    -fx-font-family: "Michroma";
+    -fx-text-fill: rgba(255, 255, 255, 1);
+    -fx-font-size: 16px;
+    -fx-background-color: rgba(255,30,30,0.5);
+    -fx-padding: 5 10 5 10;
+    -fx-margin: 20 0 0 0;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
 .title {
-    -fx-padding:60px 0 100px 0;
+    -fx-padding:10 0 100 0;
     -fx-text-fill: white;
     -fx-font-size: 28px;
     -fx-font-weight: bold;

@@ -42,7 +42,7 @@ public class PrimaryController {
             startButton.setText("START");
 
             protectedLabel.setText("UnProtected");
-            protectedLabel.setStyle("-fx-background-color: rgb(255,30,30,0.5)");
+            protectedLabel.setStyle("-fx-background-color: rgba(255,30,30,0.5)");
 
             stopCaptureLoop();
             running = false;

@@ -10,13 +10,9 @@ import javafx.stage.Stage;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 
 public class MainApp extends Application {
 
@@ -36,6 +32,13 @@ public class MainApp extends Application {
         }
 
         // Login Form Items
+        StackPane toastContainer = new StackPane();
+        toastContainer.setPadding(new Insets(20, 0, 0, 0));
+        Label failedMsg = new Label("Incorrect Credentials");
+        failedMsg.getStyleClass().add("error-message");
+        failedMsg.setVisible(false);
+        toastContainer.getChildren().add(failedMsg);
+
         Label titleLabel = new Label("PacketScope");
         titleLabel.getStyleClass().add("title");
         titleLabel.setMaxWidth(Double.MAX_VALUE);
@@ -56,7 +59,6 @@ public class MainApp extends Application {
         Button loginBtn = new Button("Login");
         loginBtn.getStyleClass().add("login-btn");
 
-
         HBox buttonWrapper = new HBox();
         buttonWrapper.getChildren().add(loginBtn);
         buttonWrapper.setMaxWidth(Double.MAX_VALUE);
@@ -65,6 +67,7 @@ public class MainApp extends Application {
         //Login Form setup
         VBox loginForm = new VBox();
         loginForm.setPadding(new Insets(0, 40, 0, 40));
+        loginForm.getChildren().add(toastContainer);
         loginForm.getChildren().add(titleLabel);
         loginForm.getChildren().add(usernameLabel);
         loginForm.getChildren().add(userField);
@@ -80,20 +83,50 @@ public class MainApp extends Application {
         stage.setResizable(false);
         stage.setScene(loginScene);
         stage.setTitle("PacketScope Desktop");
-//        stage.getIcons().add(image);
+        stage.getIcons().add(image);
         stage.show();
 
-//        // resources
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/primary.fxml"));
-//        Image image = new Image(getClass().getResourceAsStream("/images/packetscopeLogo.jpeg"));
-//
-//        // scene setup
-//        Parent parent = loader.load();
-//        Scene scene = new Scene(parent, 400, 720);
-//
-//        loadStyles(scene);
-//
-//        // Refresh
+        loginBtn.setOnAction(eh -> {
+            String username = userField.getText();
+            String password = passField.getText();
+
+            boolean authenticated = authenticate(username, password);
+
+            if (authenticated) {
+                try {
+                    Scene mainScene = loadMainInterface();
+                    stage.setScene(mainScene);
+                } catch (IOException ex) {
+                    System.out.println("custom error: " + ex.getMessage());
+                }
+            } else {
+                System.out.println("failed to authenticate");
+                failedMsg.setVisible(true);
+            }
+        });
+
+    }
+
+    private Scene loadMainInterface() throws IOException {
+
+        // resources
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/primary.fxml"));
+        File cssFile = new File("src/main/resources/styles/primary.css");
+
+        // scene setup
+        Parent parent = loader.load();
+        Scene mainScene = new Scene(parent, 400, 720);
+
+        return mainScene;
+
+    }
+
+    private boolean authenticate(String username, String password) {
+
+        return false;
+    }
+
+//    private void refresh(Scene scene) {
 //        scene.setOnKeyPressed(event -> {
 //            switch (event.getCode()) {
 //                case F5 -> {
@@ -109,13 +142,12 @@ public class MainApp extends Application {
 //            }
 //        });
 //
-    }
-
+//    }
     private void loadStyles(Scene scene) {
         scene.getStylesheets().clear();
         File cssFile = new File("src/main/resources/styles/primary.css");
-        scene.getStylesheets().add(cssFile.toURI().toString());
 
+        scene.getStylesheets().add(cssFile.toURI().toString());
         scene.getRoot().applyCss();
         scene.getRoot().layout();
     }
