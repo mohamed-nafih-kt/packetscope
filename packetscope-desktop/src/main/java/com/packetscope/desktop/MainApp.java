@@ -4,49 +4,111 @@ import java.io.File;
 import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.stage.Stage;
 import javafx.scene.*;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.text.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 public class MainApp extends Application {
 
+    public static void main(String args[]) {
+        launch(args);
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
+        File loginCss = null;
+        Image image = null;
+        try {
+            loginCss = new File("src/main/resources/styles/login.css");
+            image = new Image(getClass().getResourceAsStream("/images/packetscopeLogo.jpeg"));
+        } catch (Exception ex) {
+            System.out.println("error: " + ex.getMessage());
+        }
 
-        // resources
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/primary.fxml"));
-        Image image = new Image(getClass().getResourceAsStream("/images/packetscopeLogo.jpeg"));
+        // Login Form Items
+        Label titleLabel = new Label("PacketScope");
+        titleLabel.getStyleClass().add("title");
+        titleLabel.setMaxWidth(Double.MAX_VALUE);
+        titleLabel.setAlignment(Pos.CENTER);
 
-        // scene setup
-        Parent parent = loader.load();
-        Scene scene = new Scene(parent, 400, 720);
+        Label usernameLabel = new Label("User ID");
+        usernameLabel.getStyleClass().add("place-label");
+        TextField userField = new TextField();
+        userField.setPromptText("Enter User ID");
+        userField.getStyleClass().add("input-field");
 
-        loadStyles(scene);
+        Label passLabel = new Label("Password");
+        passLabel.getStyleClass().add("place-label");
+        PasswordField passField = new PasswordField();
+        passField.setPromptText("Enter Password");
+        passField.getStyleClass().add("input-field");
 
-        // Refresh
-        scene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case F5 -> {
-                    try {
-                        System.out.println("Reloading scene and CSS...");
-                        Parent newRoot = FXMLLoader.load(getClass().getResource("/fxml/primary.fxml"));
-                        scene.setRoot(newRoot);
-                        loadStyles(scene);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
+        Button loginBtn = new Button("Login");
+        loginBtn.getStyleClass().add("login-btn");
+
+
+        HBox buttonWrapper = new HBox();
+        buttonWrapper.getChildren().add(loginBtn);
+        buttonWrapper.setMaxWidth(Double.MAX_VALUE);
+        buttonWrapper.setAlignment(Pos.CENTER);
+
+        //Login Form setup
+        VBox loginForm = new VBox();
+        loginForm.setPadding(new Insets(0, 40, 0, 40));
+        loginForm.getChildren().add(titleLabel);
+        loginForm.getChildren().add(usernameLabel);
+        loginForm.getChildren().add(userField);
+        loginForm.getChildren().add(passLabel);
+        loginForm.getChildren().add(passField);
+        loginForm.getChildren().add(buttonWrapper);
+        loginForm.setMargin(buttonWrapper, new Insets(30, 0, 0, 0));
+
+        Scene loginScene = new Scene(loginForm, 400, 720);
+        loginScene.getStylesheets().add(loginCss.toURI().toString());
 
         // stage setup 
         stage.setResizable(false);
-        stage.setScene(scene);
+        stage.setScene(loginScene);
         stage.setTitle("PacketScope Desktop");
-        stage.getIcons().add(image);
+//        stage.getIcons().add(image);
         stage.show();
+
+//        // resources
+//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/primary.fxml"));
+//        Image image = new Image(getClass().getResourceAsStream("/images/packetscopeLogo.jpeg"));
+//
+//        // scene setup
+//        Parent parent = loader.load();
+//        Scene scene = new Scene(parent, 400, 720);
+//
+//        loadStyles(scene);
+//
+//        // Refresh
+//        scene.setOnKeyPressed(event -> {
+//            switch (event.getCode()) {
+//                case F5 -> {
+//                    try {
+//                        System.out.println("Reloading scene and CSS...");
+//                        Parent newRoot = FXMLLoader.load(getClass().getResource("/fxml/primary.fxml"));
+//                        scene.setRoot(newRoot);
+//                        loadStyles(scene);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        });
+//
     }
 
     private void loadStyles(Scene scene) {
@@ -58,7 +120,4 @@ public class MainApp extends Application {
         scene.getRoot().layout();
     }
 
-    public static void main(String args[]) {
-        launch();
-    }
 }
