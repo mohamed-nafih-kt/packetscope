@@ -1,4 +1,4 @@
-package com.packetscope.desktop;
+package com.packetscope.desktop.service;
 
 import org.pcap4j.packet.IllegalRawDataException;
 import org.pcap4j.packet.IpV4Packet;

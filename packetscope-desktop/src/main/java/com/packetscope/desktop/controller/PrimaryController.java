@@ -1,6 +1,5 @@
 package com.packetscope.desktop.controller;
 
-import javafx.animation.Animation;
 import javafx.util.Duration;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;

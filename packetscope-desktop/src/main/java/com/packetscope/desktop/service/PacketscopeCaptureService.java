@@ -1,10 +1,7 @@
-package com.packetscope.desktop;
+package com.packetscope.desktop.service;
 
-import java.io.EOFException;
 import java.util.ArrayList;
-import java.util.HexFormat;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 import org.pcap4j.core.BpfProgram;
 import org.pcap4j.core.PacketListener;
 import org.pcap4j.core.PcapHandle;
@@ -13,16 +10,9 @@ import org.pcap4j.core.PcapNetworkInterface.PromiscuousMode;
 import org.pcap4j.packet.Packet;
 import org.pcap4j.util.NifSelector;
 
-import com.packetscope.desktop.CookedPacketAnalyser;
+import com.packetscope.desktop.service.CookedPacketAnalyser;
 
-// Import Excpetions
-import org.pcap4j.core.NotOpenException;
-import org.pcap4j.core.PcapNativeException;
-import org.pcap4j.packet.EthernetPacket;
-import org.pcap4j.packet.IpV4Packet;
-import org.pcap4j.packet.TcpPacket;
-
-public class PacketscopeTest {
+public class PacketScopeCaptureService {
 
     // selecting network interface
     static PcapNetworkInterface getNetworkInterface() {
@@ -75,7 +65,7 @@ public class PacketscopeTest {
             int maxPackets = 30;
             handle.loop(maxPackets, listener);
         } catch (Exception ex) {
-            System.getLogger(PacketscopeTest.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            System.getLogger(PacketScopeCaptureService.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
         }
 
         capturedPackets.forEach(packet -> {
