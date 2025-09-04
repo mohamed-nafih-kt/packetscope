@@ -10,6 +10,16 @@
     -fx-font-family: "Michroma";
 }
 
+.protectedLabelStart {
+    -fx-font-family: "Michroma";
+    -fx-text-fill: rgba(255, 255, 255, 1);
+    -fx-font-size: 16px;
+    -fx-background-color: rgba(0, 225, 121, 0.51);
+    -fx-padding: 5 10 5 10;
+    -fx-margin: 20 0 0 0;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
 
 .title-label {
     -fx-padding:60px 0 100px 0;
@@ -42,18 +52,24 @@
     -fx-background-color: #2a2a2a;
     -fx-border-color: #4285f4;
 }
+
+/* List View Styles */
+
 .capturedPackets{
     -fx-text-fill:white;
-    -fx-background-color: rgba(0,0,0,0.5);
-    
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, transparent 5%, rgba(0,0,0,0.5) 100%);    
 }
-.protectedLabelStart {
-    -fx-font-family: "Michroma";
-    -fx-text-fill: rgba(255, 255, 255, 1);
-    -fx-font-size: 16px;
-    -fx-background-color: rgba(0, 225, 121, 0.51);
-    -fx-padding: 5 10 5 10;
-    -fx-margin: 20 0 0 0;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill:white;
 }
+.list-view .scroll-bar:vertical {
+    -fx-background-color: rgba(0,0,0,0.7); 
+}
+
+.list-view .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(255,255,255,0.3); 
+    -fx-background-insets: 0;
+    -fx-background-radius: 5px;
+}
+

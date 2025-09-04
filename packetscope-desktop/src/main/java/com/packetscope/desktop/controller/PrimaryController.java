@@ -1,11 +1,14 @@
 package com.packetscope.desktop.controller;
 
-import javafx.animation.PauseTransition;
+import javafx.animation.Animation;
+import javafx.util.Duration;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.util.Duration;
 
 public class PrimaryController {
 
@@ -28,6 +31,8 @@ public class PrimaryController {
     ListView capturedList;
 
     private boolean running = false;
+    private Timeline timeline;
+    int MAX_ITEMS = 100;
 
     // caoture packets
     @FXML
@@ -39,6 +44,7 @@ public class PrimaryController {
             protectedLabel.setText("UnProtected");
             protectedLabel.setStyle("-fx-background-color: rgb(255,30,30,0.5)");
 
+            stopCaptureLoop();
             running = false;
         } else {
 
@@ -49,17 +55,36 @@ public class PrimaryController {
             startButton.setStyle("-fx-border-color: rgb(255,62,72)");
             startButton.setText("STOP");
 
+            startCaptureLoop();
             running = true;
         }
+    }
 
-        if (running) {
-            PauseTransition delay = new PauseTransition(Duration.seconds(1));
-            delay.setOnFinished(eh -> {
-                String packet = "new packet";
-                capturedList.getItems().add(packet);
-                System.out.println("working");
-            });
-            delay.play();
+    private void startCaptureLoop() {
+        
+    timeline = new Timeline(
+        new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+            
+            int i= 0;
+            @Override
+            public void handle(ActionEvent e) {
+                i++;
+                capturedList.getItems().add(0,"new packet: 150" + i);
+                
+                //remove list items more than 1000
+                if(capturedList.getItems().size() > 1000){
+                    capturedList.getItems().remove(MAX_ITEMS, capturedList.getItems().size());
+                }
+            }
+        })
+    );
+    timeline.setCycleCount(Timeline.INDEFINITE);
+    timeline.play();
+    }
+
+    private void stopCaptureLoop() {
+        if (timeline != null) {
+            timeline.stop();
         }
     }
 }
