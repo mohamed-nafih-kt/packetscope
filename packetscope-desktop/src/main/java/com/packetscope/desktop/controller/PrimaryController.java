@@ -22,10 +22,14 @@ public class PrimaryController {
     private Button startButton;
 
     @FXML
-    Label protectedLabel ;
+    Label protectedLabel;
+
+    @FXML
+    ListView capturedList;
 
     private boolean running = false;
 
+    // caoture packets
     @FXML
     private void startCapture(ActionEvent e) {
         if (running) {
@@ -34,19 +38,28 @@ public class PrimaryController {
 
             protectedLabel.setText("UnProtected");
             protectedLabel.setStyle("-fx-background-color: rgb(255,30,30,0.5)");
-            
+
             running = false;
         } else {
-                      
+
             protectedLabel.setText("Protected");
             protectedLabel.setStyle("-fx-background-color: rgba(0, 225, 121, 0.51)");
             protectedLabel.setVisible(true);
-            
+
             startButton.setStyle("-fx-border-color: rgb(255,62,72)");
             startButton.setText("STOP");
 
             running = true;
         }
-    }
 
+        if (running) {
+            PauseTransition delay = new PauseTransition(Duration.seconds(1));
+            delay.setOnFinished(eh -> {
+                String packet = "new packet";
+                capturedList.getItems().add(packet);
+                System.out.println("working");
+            });
+            delay.play();
+        }
+    }
 }
