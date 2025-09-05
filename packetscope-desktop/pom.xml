@@ -33,13 +33,15 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
+            <classifier>mac</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
+            <classifier>mac</classifier>
         </dependency>
-
+        
         <!-- MySQL Connector -->
         <dependency>
             <groupId>com.mysql</groupId>

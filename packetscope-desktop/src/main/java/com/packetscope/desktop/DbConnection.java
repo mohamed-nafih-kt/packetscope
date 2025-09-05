@@ -23,7 +23,7 @@ public class DbConnection {
         }
     }
 
-    public Connection getConnection() {
+    public Connection getConnection() {        
         return con;
     }
 

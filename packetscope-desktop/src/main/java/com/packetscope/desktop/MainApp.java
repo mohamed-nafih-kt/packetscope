@@ -9,7 +9,7 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) {
-        
+
 //        Image image = null;
 //        try {
 //            image = new Image(getClass().getResourceAsStream("/images/packetscopeLogo.jpeg"));

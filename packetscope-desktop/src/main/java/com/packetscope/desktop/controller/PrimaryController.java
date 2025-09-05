@@ -1,5 +1,6 @@
 package com.packetscope.desktop.controller;
 
+import com.packetscope.desktop.service.PacketCaptureService;
 import javafx.util.Duration;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -54,31 +55,38 @@ public class PrimaryController {
             startButton.setStyle("-fx-border-color: rgb(255,62,72)");
             startButton.setText("STOP");
 
+            try {
+                new PacketCaptureService();
+            } catch (Exception ex) {
+                System.out.println("primary/capture-error: " + ex.getMessage());
+            }
+            
             startCaptureLoop();
             running = true;
         }
     }
 
     private void startCaptureLoop() {
-        
-    timeline = new Timeline(
-        new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
-            
-            int i= 0;
-            @Override
-            public void handle(ActionEvent e) {
-                i++;
-                capturedList.getItems().add(0,"new packet: 150" + i);
-                
-                //remove list items more than 1000
-                if(capturedList.getItems().size() > 1000){
-                    capturedList.getItems().remove(MAX_ITEMS, capturedList.getItems().size());
-                }
-            }
-        })
-    );
-    timeline.setCycleCount(Timeline.INDEFINITE);
-    timeline.play();
+
+        timeline = new Timeline(
+                new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+
+                    int i = 0;
+
+                    @Override
+                    public void handle(ActionEvent e) {
+                        i++;
+                        capturedList.getItems().add(0, "new packet: 150" + i);
+
+                        //remove list items more than 1000
+                        if (capturedList.getItems().size() > 1000) {
+                            capturedList.getItems().remove(MAX_ITEMS, capturedList.getItems().size());
+                        }
+                    }
+                })
+        );
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
     }
 
     private void stopCaptureLoop() {

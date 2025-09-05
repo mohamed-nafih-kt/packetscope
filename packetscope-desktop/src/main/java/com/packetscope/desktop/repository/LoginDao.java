@@ -9,13 +9,13 @@ import java.sql.ResultSet;
 public class LoginDao {
 
     public User getUserDetails(String username) {
-        DbConnection dbObject = new DbConnection();
         User user = null;
+        DbConnection dbCon = new DbConnection();
 
-        String sql = "SELECT name, password FROM users_list WHERE name = ? LIMIT 1";
+        String sql = "SELECT name, password FROM users WHERE name = ? LIMIT 1";
 
         try (
-            Connection con = dbObject.getConnection(); 
+            Connection con = dbCon.getConnection(); 
             PreparedStatement ps = con.prepareStatement(sql)) {
 
                 ps.setString(1, username);  // safer: prevents SQL injection
