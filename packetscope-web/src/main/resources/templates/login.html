@@ -1,10 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Login - PacketScope</title>
+    <link rel="stylesheet" href="/css/Login.css">
 </head>
 <body>
-$END$
+<div class="login-container">
+    <h1>PacketScope Login</h1>
+    <!-- Example error message -->
+    <!-- <div class="error-message">Invalid username or password</div> -->
+    <form method="post" action="/login">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit" class="login-btn">Login</button>
+    </form>
+</div>
 </body>
 </html>
