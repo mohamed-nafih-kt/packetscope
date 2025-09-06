@@ -55,15 +55,20 @@ body {
 
 /* Error message */
 .error-message {
-  font-family: 'Michroma', sans-serif;
+  display: none;
+  position: fixed;
+  top: 30px;
+  text-align: center;
+  font-family: "Michroma", sans-serif;
   color: white;
   font-size: 16px;
-  background-color: rgba(255,30,30,0.5);
+  background-color: rgba(255, 30, 30, 0.5);
   padding: 8px 12px;
   border-radius: 8px;
-  margin-bottom: 1rem;
 }
-
+.show {
+  display: block;
+}
 /* Login button */
 .login-btn {
   width: 200px;

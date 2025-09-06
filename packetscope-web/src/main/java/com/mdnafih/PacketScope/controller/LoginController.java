@@ -14,7 +14,10 @@ import java.util.stream.IntStream;
 public class LoginController {
 
     @GetMapping({"/" ,"/login"})
-    public String showLoginForm() {
+    public String showLoginForm(@RequestParam(required = false) String error, Model model) {
+        if (error != null) {
+            model.addAttribute("loginError", true);
+        }
         return "login";
     }
 
