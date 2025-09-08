@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PacketScope - Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="/css/home.css?14" />
+    <link rel="stylesheet" href="/css/home.css?15" />
 </head>
 
 <body>
@@ -18,14 +18,15 @@
     </div>
     <ul class="nav-links">
         <li><a href="#">Home</a></li>
-        <li><a href="#">Request Logs</a></li>
-        <li><a href="#">Device Logs</a></li>
+        <li><a href="#">Transaction Logs</a></li>
+        <li><a href="#">Packet Logs</a></li>
         <li><a href="#">Live Monitor</a></li>
     </ul>
 </nav>
 
 <!-- Main Section -->
 <main class="main-container">
+
     <!-- REQUEST SECTION -->
     <section class="request-panel">
         <h2>Request</h2>
@@ -40,8 +41,8 @@
                         <option value="PATCH">PATCH</option>
                     </select>
                 </div>
-                <input type="text" placeholder="Enter URL to monitor traffic..." autofocus/>
-                <button>Send</button>
+                <input id="request-url" type="text" placeholder="Enter URL to monitor traffic..." autofocus/>
+                <button id="send-request">Send</button>
             </div>
         </div>
 
@@ -85,19 +86,19 @@
         <!-- Tab Contents -->
         <div class="tab-content">
             <div id="response-results" class="tab-pane active">
-                <pre>{ "message": "Sample response body" }</pre>
+                <pre id="result-status">{ "message": "Sample response body" }</pre>
             </div>
 
             <div id="response-body" class="tab-pane">
-                <pre>{ "message": "Sample response body" }</pre>
+                <pre id="result-body">{ "message": "Sample response body" }</pre>
             </div>
 
             <div id="response-headers" class="tab-pane">
-                <pre>Content-Type: application/json</pre>
+                <pre id="result-headers">Content-Type: application/json</pre>
             </div>
 
             <div id="response-cookies" class="tab-pane">
-                <pre>SESSION_ID=xyz123</pre>
+                <pre id="result-cookies">SESSION_ID=xyz123</pre>
             </div>
         </div>
     </section>

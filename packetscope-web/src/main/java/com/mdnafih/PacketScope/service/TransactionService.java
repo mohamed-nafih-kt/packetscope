@@ -7,12 +7,15 @@ import com.mdnafih.PacketScope.model.User;
 import com.mdnafih.PacketScope.repository.TransactionRepository;
 
 import jakarta.persistence.Lob;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.http.HttpHeaders.HttpHeaders;
 
-import java.net.http.HttpHeaders;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
 public class TransactionService {
@@ -30,9 +33,26 @@ public class TransactionService {
 
         long duration = System.currentTimeMillis() - startTime;
 
+        HttpHeaders headers = new HttpHeaders();
+
+        if(requestDto.getHeaders() != null) {
+            for(Map.Entry<String, String> entry: requestDto.getHeaders().entrySet() ) {
+                headers.add(entry.getKey(), entry.getValue());
+            }
+        }
+
+        HttpEntity<String> entity = new HttpEntity<String>(requestDto.getBody(), headers);
+
+        HttpMethod httpMethod = HttpMethod.valueOf(requestDto.getMethod().toUpperCase());
+
+        ResponseEntity<String>  response = restTemplate.exchange(
+                requestDto.getUrl(),
+                httpMethod,
+                entity,
+                String.class
+        );
+
         Transaction transaction = new Transaction();
-
-
         transaction.setMethod(requestDto.getMethod());
         transaction.setUrl(requestDto.getUrl());
         transaction.setRequestHeaders(requestDto.getHeaders().toString());  // store as JSON/string
@@ -42,7 +62,7 @@ public class TransactionService {
         transaction.setResponseBody(response.getBody());
         transaction.setTimestamp(LocalDateTime.now());
         transaction.setDurationMs(duration);
-//        transaction.setUser(user);
+        transaction.setUser(user);
 
         transactionRepository.save(transaction);
 
