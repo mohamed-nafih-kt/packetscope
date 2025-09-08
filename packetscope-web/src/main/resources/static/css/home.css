@@ -339,6 +339,7 @@ textarea#request-body {
   font-family: monospace;
   white-space: pre-wrap;
   overflow: hidden;
+  overflow-y: scroll;
   transition: all 0.3s ease;
 }
 
@@ -356,5 +357,24 @@ textarea#request-body {
 .tab-pane.active {
   opacity: 1;
   pointer-events: auto;
+}
+
+/* save button */
+ .save-btn{
+  width: 120px;
+  background-color: #1c1c1c;
+  color: white;
+  font-size: 16px;
+  border: 2px solid #1a73e8;
+  border-radius: 50px;
+  cursor: pointer;
+  font-family: "Michroma", sans-serif;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.save-btn:hover {
+  background-color: #2a2a2a;
+  border-color: #4285f4;
 }
 

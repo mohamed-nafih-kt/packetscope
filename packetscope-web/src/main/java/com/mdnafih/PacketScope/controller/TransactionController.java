@@ -23,30 +23,33 @@ public class TransactionController {
     private final UserRepository userRepository;
 
     public TransactionController(TransactionService transactionService,
-                                 UserRepository userRepository, TransactionRepository transactionRepository) {
+                                 UserRepository userRepository,
+                                 TransactionRepository transactionRepository) {
         this.transactionService = transactionService;
         this.userRepository = userRepository;
         this.transactionRepository = transactionRepository;
     }
 
-    @PostMapping
+    @PostMapping("/execute")
     public ResponseEntity<TransactionResponseDTO> executeTransaction(
+            @RequestBody TransactionRequestDTO requestDto) {
+        TransactionResponseDTO responseDto = transactionService.executeTransaction(requestDto);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity<String> saveTransaction(
             @RequestBody TransactionRequestDTO requestDto,
             Principal principal) {
 
-        // 1. Get the logged-in username from Spring Security
         String username = principal.getName();
-
-        // 2. Fetch the User entity from DB
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 3. Pass request + user to service
-        TransactionResponseDTO responseDto = transactionService.executeTransaction(requestDto, user);
+        TransactionResponseDTO responseDto = transactionService.executeTransaction(requestDto);
+        transactionService.saveTransaction(requestDto, responseDto, user);
 
-        // 4. Return the response DTO as JSON
-        return ResponseEntity.ok(responseDto);
-
+        return ResponseEntity.ok("Transaction saved successfully!");
     }
 
     @GetMapping

@@ -28,55 +28,56 @@ public class TransactionService {
         this.restTemplate = new RestTemplate();
     }
 
-    public TransactionResponseDTO executeTransaction(TransactionRequestDTO requestDto, User user) {
+    public TransactionResponseDTO executeTransaction(TransactionRequestDTO requestDto) {
         long startTime = System.currentTimeMillis();
 
-        long duration = System.currentTimeMillis() - startTime;
-
         HttpHeaders headers = new HttpHeaders();
-
-        if(requestDto.getHeaders() != null) {
-            for(Map.Entry<String, String> entry: requestDto.getHeaders().entrySet() ) {
+        if (requestDto.getHeaders() != null) {
+            for (Map.Entry<String, String> entry : requestDto.getHeaders().entrySet()) {
                 headers.add(entry.getKey(), entry.getValue());
             }
         }
 
-        HttpEntity<String> entity = new HttpEntity<String>(requestDto.getBody(), headers);
-
+        HttpEntity<String> entity = new HttpEntity<>(requestDto.getBody(), headers);
         HttpMethod httpMethod = HttpMethod.valueOf(requestDto.getMethod().toUpperCase());
 
-        ResponseEntity<String>  response = restTemplate.exchange(
+        ResponseEntity<String> response = restTemplate.exchange(
                 requestDto.getUrl(),
                 httpMethod,
                 entity,
                 String.class
         );
 
-        Transaction transaction = new Transaction();
-        transaction.setMethod(requestDto.getMethod());
-        transaction.setUrl(requestDto.getUrl());
-        transaction.setRequestHeaders(requestDto.getHeaders().toString());  // store as JSON/string
-        transaction.setRequestBody(requestDto.getBody());
-        transaction.setResponseStatus(response.getStatusCodeValue());
-        transaction.setResponseHeaders(response.getHeaders().toSingleValueMap().toString());
-        transaction.setResponseBody(response.getBody());
-        transaction.setTimestamp(LocalDateTime.now());
-        transaction.setDurationMs(duration);
-        transaction.setUser(user);
-
-        transactionRepository.save(transaction);
+        long duration = System.currentTimeMillis() - startTime;
 
         TransactionResponseDTO responseDto = new TransactionResponseDTO();
         responseDto.setStatus(response.getStatusCodeValue());
         responseDto.setHeaders(response.getHeaders().toSingleValueMap());
         responseDto.setBody(response.getBody());
         responseDto.setDurationMs(duration);
-        responseDto.setTimestamp(transaction.getTimestamp().toString());
+        responseDto.setTimestamp(LocalDateTime.now().toString());
 
         return responseDto;
-
     }
 
+    // Step 2: Save transaction explicitly
+    public Transaction saveTransaction(TransactionRequestDTO requestDto,
+                                       TransactionResponseDTO responseDto,
+                                       User user) {
+        Transaction transaction = new Transaction();
+        transaction.setMethod(requestDto.getMethod());
+        transaction.setUrl(requestDto.getUrl());
+        transaction.setRequestHeaders(requestDto.getHeaders().toString());
+        transaction.setRequestBody(requestDto.getBody());
+        transaction.setResponseStatus(responseDto.getStatus());
+        transaction.setResponseHeaders(responseDto.getHeaders().toString());
+        transaction.setResponseBody(responseDto.getBody());
+        transaction.setTimestamp(LocalDateTime.now());
+        transaction.setDurationMs(responseDto.getDurationMs());
+        transaction.setUser(user);
+
+        return transactionRepository.save(transaction);
+    }
 
 
 }

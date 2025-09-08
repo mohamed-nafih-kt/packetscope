@@ -8,6 +8,7 @@ import java.util.Map;
 @Getter
 @Setter
 public class TransactionResponseDTO {
+    private Long id;
     private int status;
     private Map<String, String> headers;
     private String body;
