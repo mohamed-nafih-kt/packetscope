@@ -12,7 +12,7 @@
 	<artifactId>PacketScope</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>PacketScope</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Java Based Packet Capture</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -74,16 +74,7 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.pcap4j</groupId>
-            <artifactId>pcap4j-core</artifactId>
-            <version>[1.0, 2.0)</version>
-        </dependency>
-        <dependency>
-            <groupId>org.pcap4j</groupId>
-            <artifactId>pcap4j-packetfactory-static</artifactId>
-            <version>[1.0, 2.0)</version>
-        </dependency>
+
 	</dependencies>
 
     <!-- dependencies - over -->
