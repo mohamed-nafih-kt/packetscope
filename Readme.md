@@ -1,5 +1,6 @@
-# Project Structure
+### Project Structure
 
+```
 packetscope/
 ├── .gitattributes
 ├── .gitignore
@@ -34,3 +35,4 @@ packetscope/
         │        └──(controller, model, service, view, MainApp.java)       
         └── resources/
             └── (styles, images, fxml, fonts)
+```
