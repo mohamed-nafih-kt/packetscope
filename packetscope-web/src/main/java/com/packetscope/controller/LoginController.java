@@ -1,4 +1,4 @@
-package com.mdnafih.PacketScope.controller;
+package com.packetscope.controller;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;

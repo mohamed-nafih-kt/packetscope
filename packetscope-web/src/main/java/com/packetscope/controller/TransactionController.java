@@ -1,12 +1,12 @@
-package com.mdnafih.PacketScope.controller;
+package com.packetscope.controller;
 
-import com.mdnafih.PacketScope.model.Transaction;
-import com.mdnafih.PacketScope.model.TransactionRequestDTO;
-import com.mdnafih.PacketScope.model.TransactionResponseDTO;
-import com.mdnafih.PacketScope.model.User;
-import com.mdnafih.PacketScope.repository.TransactionRepository;
-import com.mdnafih.PacketScope.repository.UserRepository;
-import com.mdnafih.PacketScope.service.TransactionService;
+import com.packetscope.model.Transaction;
+import com.packetscope.model.TransactionRequestDTO;
+import com.packetscope.model.TransactionResponseDTO;
+import com.packetscope.model.User;
+import com.packetscope.repository.TransactionRepository;
+import com.packetscope.repository.UserRepository;
+import com.packetscope.service.TransactionService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

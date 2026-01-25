@@ -1,7 +1,7 @@
-package com.mdnafih.PacketScope.service;
+package com.packetscope.service;
 
-import com.mdnafih.PacketScope.model.User;
-import com.mdnafih.PacketScope.repository.UserRepository;
+import com.packetscope.model.User;
+import com.packetscope.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,9 +22,8 @@ public class UserLoginService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
-        com.mdnafih.PacketScope.model.User user = userRepository.findByUsername(username)
+        com.packetscope.model.User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"+ username));
-
         return org.springframework.security.core.userdetails.User.withUsername(user.getUsername()).password(user.getPassword()).roles("USER").build();
 
     }

@@ -1,4 +1,4 @@
-package com.mdnafih.PacketScope.model;
+package com.packetscope.model;
 
 import lombok.Getter;
 import lombok.Setter;

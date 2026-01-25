@@ -1,47 +1,72 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
+# --- System / OS Files ---
+.DS_Store
+**/*.DS_Store
+Thumbs.db
+desktop.ini
+*~
+*.swp
 
-### Dev ###
-application-dev.properties
+# --- Build & Compiled Files (Java/Maven) ---
+**/target/
+**/dependency-reduced-pom.xml
+**/runtime/
+**/jfx-runtime/
+**/jre/
+*.class
+*.jar
+*.war
+*.ear
+!**/maven-wrapper.jar
+HELP.md
+
+# --- Project Specific (PacketScope) ---
+packetscope-desktop/src/main/java/com/packetscope/desktop/service/PacketCapturePlayground.java
+packetscope-desktop/src/main/java/com/packetscope/desktop/DbConnection.java
 packetscope-desktop/jfx-runtime/
 packetscope-desktop/runtime/
-packetscope-desktop/dependency-reduced-pom.xml
-packetscope-desktop/src/main/java/com/packetscope/desktop/DbConnection.java
+packetscope-web/src/test
+
+# --- Environment, Secrets & Config ---
+# Ensure you don't leak DB credentials or API keys
+.env
+.env.*
+application.properties
+application-*.properties
+**/**/application-*.properties
+config/*.properties
+config/*.yml
+config/*.yaml
+nbactions.xml
+
+# --- Logs ---
 *.log
+logs/
 
-
-### IntelliJ IDEA ###
-.idea
+# --- IntelliJ IDEA ---
+.idea/
 *.iws
 *.iml
 *.ipr
+out/
 
-### NetBeans ###
+# --- VS Code ---
+.vscode/
+.history/
+*.history/
+
+# --- Eclipse / STS ---
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+# --- NetBeans ---
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 build/
-nbactions.xml
-
-
-### VS Code ###
-.vscode/
-.history/
-*.history/
-
-### MacOS ###
-.DS_Store
-*.DS_Store
-**/*.DS_Store
-
-### Eclipse/STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache

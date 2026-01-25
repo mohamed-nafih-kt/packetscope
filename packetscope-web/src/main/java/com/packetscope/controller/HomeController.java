@@ -1,4 +1,4 @@
-package com.mdnafih.PacketScope.controller;
+package com.packetscope.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

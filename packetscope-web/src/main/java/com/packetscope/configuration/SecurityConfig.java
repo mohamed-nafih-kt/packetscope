@@ -1,4 +1,4 @@
-package com.mdnafih.PacketScope.configuration;
+package com.packetscope.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +31,7 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 )
-                .csrf(csrf -> csrf.disable());
+                .csrf(csrf -> csrf.disable()); //disabled cross-site request forgery
 
         return http.build();
     }

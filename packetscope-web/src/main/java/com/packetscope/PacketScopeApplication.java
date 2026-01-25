@@ -1,4 +1,4 @@
-package com.mdnafih.PacketScope;
+package com.packetscope;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,10 +1,10 @@
-package com.mdnafih.PacketScope.service;
+package com.packetscope.service;
 
-import com.mdnafih.PacketScope.model.Transaction;
-import com.mdnafih.PacketScope.model.TransactionRequestDTO;
-import com.mdnafih.PacketScope.model.TransactionResponseDTO;
-import com.mdnafih.PacketScope.model.User;
-import com.mdnafih.PacketScope.repository.TransactionRepository;
+import com.packetscope.model.Transaction;
+import com.packetscope.model.TransactionRequestDTO;
+import com.packetscope.model.TransactionResponseDTO;
+import com.packetscope.model.User;
+import com.packetscope.repository.TransactionRepository;
 
 import jakarta.persistence.Lob;
 import org.springframework.http.HttpEntity;

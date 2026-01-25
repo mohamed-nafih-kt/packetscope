@@ -7,10 +7,6 @@ import java.sql.SQLException;
 public class DbConnectionProd {
     private Connection con;
 
-    public DbConnection() {
-        setConnection();
-    }
-
     private void setConnection() {
         String url = "jdbc:mysql://localhost:3306/packetscope";
         String username = "USERNAME"; // change USERNAME

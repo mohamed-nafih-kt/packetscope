@@ -1,6 +1,6 @@
-package com.mdnafih.PacketScope.repository;
+package com.packetscope.repository;
 
-import com.mdnafih.PacketScope.model.User;
+import com.packetscope.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
