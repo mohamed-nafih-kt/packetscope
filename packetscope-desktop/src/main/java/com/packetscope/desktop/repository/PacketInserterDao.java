@@ -1,6 +1,6 @@
 package com.packetscope.desktop.repository;
 
-import com.packetscope.desktop.DbConnection;
+import com.packetscope.desktop.DbConnectionDev;
 import org.pcap4j.core.*;
 import org.pcap4j.packet.Packet;
 import java.sql.Connection;
@@ -14,7 +14,7 @@ public class PacketInserterDao {
             + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     public static void insertPacket(int userId, Timestamp timestamp,String srcIp, String dstIp, String protocol , Packet packet) {
-        DbConnection dbCon = new DbConnection();
+        DbConnectionDev dbCon = new DbConnectionDev();
         try (Connection conn = dbCon.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 

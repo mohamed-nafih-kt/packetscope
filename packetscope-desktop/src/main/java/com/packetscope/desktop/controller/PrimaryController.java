@@ -1,14 +1,14 @@
 package com.packetscope.desktop.controller;
 
 import com.packetscope.desktop.service.PacketCaptureService;
-import javafx.util.Duration;
-import javafx.animation.KeyFrame;
+import com.packetscope.desktop.service.ObservablePacketStream;
+import com.packetscope.desktop.model.CapturedPacket;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+
 
 public class PrimaryController {
 
@@ -25,18 +25,29 @@ public class PrimaryController {
     private Button startButton;
 
     @FXML
-    Label protectedLabel;
+    private ListView<CapturedPacket> packetListView; 
+    
+    private ObservablePacketStream packetStream;
+    
+    private PacketCaptureService packetCaptureService;
+    
 
+    
     @FXML
-    ListView capturedList;
-
+    Label protectedLabel;
+    
     private boolean running = false;
     private Timeline timeline;
     int MAX_ITEMS = 100;
-
-    // caoture packets
+    
+    // capture packets
     @FXML
     private void startCapture(ActionEvent e) {
+        
+        if (packetCaptureService == null) {
+            System.err.println("Capture service not initialised yet");
+            return;
+        }
         if (running) {
             startButton.setStyle("-fx-border-color: rgb(28,115,232)");
             startButton.setText("START");
@@ -44,7 +55,7 @@ public class PrimaryController {
             protectedLabel.setText("UnProtected");
             protectedLabel.setStyle("-fx-background-color: rgba(255,30,30,0.5)");
 
-            stopCaptureLoop();
+            packetCaptureService.stop();
             running = false;
         } else {
 
@@ -54,44 +65,24 @@ public class PrimaryController {
 
             startButton.setStyle("-fx-border-color: rgb(255,62,72)");
             startButton.setText("STOP");
-
-            try {
-                new PacketCaptureService();
-            } catch (Exception ex) {
-                System.out.println("primary/capture-error: " + ex.getMessage());
-            }
             
-            startCaptureLoop();
+            packetCaptureService.start();
             running = true;
         }
     }
 
-    private void startCaptureLoop() {
+    public void setPacketStream(ObservablePacketStream packetStream) {
+        this.packetStream = packetStream;    
+        packetCaptureService =  new PacketCaptureService(packetStream);
+        packetListView.setItems(packetStream.getPackets());
+        startButton.setDisable(false);
+        
 
-        timeline = new Timeline(
-                new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
-
-                    int i = 0;
-
-                    @Override
-                    public void handle(ActionEvent e) {
-                        i++;
-                        capturedList.getItems().add(0, "new packet: 150" + i);
-
-                        //remove list items more than 1000
-                        if (capturedList.getItems().size() > 1000) {
-                            capturedList.getItems().remove(MAX_ITEMS, capturedList.getItems().size());
-                        }
-                    }
-                })
-        );
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
     }
-
-    private void stopCaptureLoop() {
-        if (timeline != null) {
-            timeline.stop();
-        }
+    
+    @FXML
+    public void initialize() {
+        startButton.setDisable(true);
     }
+        
 }

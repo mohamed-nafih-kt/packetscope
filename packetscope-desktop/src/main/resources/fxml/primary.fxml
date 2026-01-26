@@ -14,7 +14,7 @@
           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <Label styleClass="title-label" text="Packet Scope" />
         <Button fx:id="startButton" onAction="#startCapture" styleClass="primary-button" text="START" />
-        <ListView fx:id="capturedList" prefHeight="464.0" prefWidth="400.0" styleClass="capturedPackets" />
+        <ListView fx:id="packetListView" prefHeight="464.0" prefWidth="400.0" styleClass="capturedPackets" />
     </VBox>
 
     <!-- Overlay for floating labels -->

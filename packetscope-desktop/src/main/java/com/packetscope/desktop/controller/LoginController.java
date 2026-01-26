@@ -1,6 +1,7 @@
 package com.packetscope.desktop.controller;
 
 import com.packetscope.desktop.service.LoginService;
+import com.packetscope.desktop.service.ObservablePacketStream;
 import java.io.IOException;
 import javafx.animation.PauseTransition;
 import javafx.fxml.FXMLLoader;
@@ -56,10 +57,19 @@ public class LoginController {
     private void loadMainInterface(){
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/primary.fxml"));
-            Scene mainScene = new Scene(loader.load());
+            Parent root = loader.load();
+            
+            ObservablePacketStream packetStream = new ObservablePacketStream();
+            PrimaryController controller = loader.getController();
+            controller.setPacketStream(packetStream);
+            
+            Scene mainScene = new Scene(root);
+            stage.setScene(mainScene);
+            
             stage.setScene(mainScene);
         } catch (IOException ex) {
             System.out.println("Error loading main UI: " + ex.getMessage());
+            ex.printStackTrace(); 
         }
     }
 

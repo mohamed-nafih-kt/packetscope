@@ -20,8 +20,9 @@ desktop.ini
 HELP.md
 
 # --- Project Specific (PacketScope) ---
+packetscope-desktop/src/main/java/com/packetscope/desktop/DbConnectionDev.java
 packetscope-desktop/src/main/java/com/packetscope/desktop/service/PacketCapturePlayground.java
-packetscope-desktop/src/main/java/com/packetscope/desktop/DbConnection.java
+packetscope-desktop/src/main/resources/config-dev.properties
 packetscope-desktop/jfx-runtime/
 packetscope-desktop/runtime/
 packetscope-web/src/test

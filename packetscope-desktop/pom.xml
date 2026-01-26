@@ -10,6 +10,25 @@
     <artifactId>packetscope-desktop</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <!-- manage developement and production profiles -->
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <env>dev</env>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <env>prod</env>
+            </properties>
+        </profile>
+    </profiles>
+
     
     <name>PacketScope Desktop</name>
     <description>Desktop module for packet capture and local analysis</description>
@@ -22,10 +41,22 @@
 
     <dependencies>
         <!-- Pcap4J for packet capture -->
-        <dependency>
+        
+        <!--<dependency>
             <groupId>org.pcap4j</groupId>
             <artifactId>pcap4j-core</artifactId>
             <version>1.7.3</version>
+        </dependency>-->
+        
+        <dependency>
+            <groupId>org.pcap4j</groupId>
+            <artifactId>pcap4j-core</artifactId>
+            <version>1.8.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.pcap4j</groupId>
+            <artifactId>pcap4j-packetfactory-static</artifactId>
+            <version>1.8.2</version>
         </dependency>
 
         <!-- JavaFX modules -->
@@ -53,6 +84,7 @@
     
     <!-- Build configuration -->
     <build>
+
         <plugins>
             <!-- Compiler plugin -->
             <plugin>
@@ -61,6 +93,12 @@
                 <version>3.11.0</version>
                 <configuration>
                     <release>21</release>
+                    <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>woff</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>woff2</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>otf</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
                 </configuration>
             </plugin>
             
