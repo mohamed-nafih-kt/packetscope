@@ -3,13 +3,20 @@ package com.packetscope.desktop.service;
 import java.time.Instant;
 
 import org.pcap4j.packet.*;
+
 import com.packetscope.desktop.model.CapturedPacket;
+import com.packetscope.desktop.model.TransportProtocol;
+import com.packetscope.desktop.model.PacketDirection;
 
 public class PacketDecoder {
 
-    public static CapturedPacket decode(Packet packet, Instant timestamp) {
+    public static CapturedPacket decode(Packet packet, Instant timestamp, String interfaceName) {
 
         CapturedPacket result = new CapturedPacket();
+
+        result.direction = PacketDirection.UNKNOWN;
+        result.interfaceName = interfaceName;      
+        result.packetSize = packet.length();
         result.timestamp = timestamp;
 
         // Ethernet is guaranteed at DLT 1
@@ -25,9 +32,9 @@ public class PacketDecoder {
 
         // IPv4
         if (l3 instanceof IpV4Packet ipv4) {
-            result.ipVersion = "IPv4";
-            result.srcIp = ipv4.getHeader().getSrcAddr().getHostAddress();
-            result.dstIp = ipv4.getHeader().getDstAddr().getHostAddress();
+            result.ipVersion = 4;
+            result.sourceIp = ipv4.getHeader().getSrcAddr().getAddress();
+            result.destinationIp = ipv4.getHeader().getDstAddr().getAddress();
 
             decodeTransport(ipv4.getPayload(), result);
             return result;
@@ -35,9 +42,9 @@ public class PacketDecoder {
 
         // IPv6
         if (l3 instanceof IpV6Packet ipv6) {
-            result.ipVersion = "IPv6";
-            result.srcIp = ipv6.getHeader().getSrcAddr().getHostAddress();
-            result.dstIp = ipv6.getHeader().getDstAddr().getHostAddress();
+            result.ipVersion = 6;
+            result.sourceIp = ipv6.getHeader().getSrcAddr().getAddress();
+            result.destinationIp = ipv6.getHeader().getDstAddr().getAddress();
 
             decodeTransport(ipv6.getPayload(), result);
             return result;
@@ -49,19 +56,19 @@ public class PacketDecoder {
     private static void decodeTransport(Packet l4, CapturedPacket result) {
 
         if (l4 instanceof TcpPacket tcp) {
-            result.protocol = "TCP";
-            result.srcPort = tcp.getHeader().getSrcPort().valueAsInt();
-            result.dstPort = tcp.getHeader().getDstPort().valueAsInt();
+            result.protocol = TransportProtocol.TCP;
+            result.sourcePort = tcp.getHeader().getSrcPort().valueAsInt();
+            result.destinationPort = tcp.getHeader().getDstPort().valueAsInt();
             return;
         }
 
         if (l4 instanceof UdpPacket udp) {
-            result.protocol = "UDP";
-            result.srcPort = udp.getHeader().getSrcPort().valueAsInt();
-            result.dstPort = udp.getHeader().getDstPort().valueAsInt();
+            result.protocol = TransportProtocol.UDP;
+            result.sourcePort = udp.getHeader().getSrcPort().valueAsInt();
+            result.destinationPort = udp.getHeader().getDstPort().valueAsInt();
             return;
         }
 
-        result.protocol = "OTHER";
+        result.protocol = TransportProtocol.UNKNOWN;
     }
 }

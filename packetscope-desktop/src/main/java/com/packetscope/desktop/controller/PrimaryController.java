@@ -3,6 +3,11 @@ package com.packetscope.desktop.controller;
 import com.packetscope.desktop.service.PacketCaptureService;
 import com.packetscope.desktop.service.ObservablePacketStream;
 import com.packetscope.desktop.model.CapturedPacket;
+import com.packetscope.desktop.persistence.PacketWriteQueue;
+import com.packetscope.desktop.persistence.PacketPersistenceWorker;
+import com.packetscope.desktop.DbConnection;
+
+import java.sql.Connection;
 import javafx.animation.Timeline;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
@@ -31,6 +36,8 @@ public class PrimaryController {
     private ObservablePacketStream packetStream;
     
     private PacketCaptureService packetCaptureService;
+    
+    private PacketPersistenceWorker worker ;
     
 
     
@@ -74,7 +81,13 @@ public class PrimaryController {
 
     public void setPacketStream(ObservablePacketStream packetStream) {
         this.packetStream = packetStream;    
-        packetCaptureService =  new PacketCaptureService(packetStream);
+        
+        PacketWriteQueue writeQueue = new PacketWriteQueue(1000);
+        packetCaptureService =  new PacketCaptureService(packetStream, writeQueue);
+        
+        DbConnection dbConnection = new DbConnection();
+        Connection con = dbConnection.getConnection();
+        
         packetListView.setItems(packetStream.getPackets());
         startButton.setDisable(false);
         
@@ -83,6 +96,13 @@ public class PrimaryController {
                 packetListView.scrollTo(0);
             }
         });
+                
+        worker = new PacketPersistenceWorker(writeQueue.getQueue(),con);
+        
+        Thread workerThread = new Thread(worker, "packet-db-writer");
+        workerThread.setDaemon(true);
+        workerThread.start();
+
         
 
     }

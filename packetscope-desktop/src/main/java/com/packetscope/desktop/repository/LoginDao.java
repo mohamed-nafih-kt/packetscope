@@ -12,7 +12,7 @@ public class LoginDao {
         User user = null;
         DbConnection dbCon = new DbConnection();
 
-        String sql = "SELECT name, password FROM users WHERE username = ? LIMIT 1";
+        String sql = "SELECT username, password FROM users WHERE username = ? LIMIT 1";
 
         try (
             Connection con = dbCon.getConnection(); 

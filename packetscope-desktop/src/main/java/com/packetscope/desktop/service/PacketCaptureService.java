@@ -1,6 +1,10 @@
 package com.packetscope.desktop.service;
 
 import com.packetscope.desktop.model.CapturedPacket;
+import com.packetscope.desktop.persistence.PacketWriteQueue;
+
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.pcap4j.core.BpfProgram;
 import org.pcap4j.core.PacketListener;
 import org.pcap4j.core.PcapHandle;
@@ -8,9 +12,6 @@ import org.pcap4j.core.PcapNetworkInterface;
 import org.pcap4j.core.PcapNetworkInterface.PromiscuousMode;
 import org.pcap4j.core.Pcaps;
 import org.pcap4j.packet.Packet;
-import org.pcap4j.util.NifSelector;
-
-import java.time.Instant;
 
 public class PacketCaptureService {
     
@@ -18,9 +19,13 @@ public class PacketCaptureService {
     private volatile boolean running = false;
     private Thread captureThread;
     private PcapHandle handle;
+    private PacketWriteQueue writeQueue;
+    private final AtomicLong droppedPackets = new AtomicLong();
 
-    public PacketCaptureService(ObservablePacketStream stream) {
+
+    public PacketCaptureService(ObservablePacketStream stream, PacketWriteQueue writeQueue) {
         this.stream = stream;
+        this.writeQueue = writeQueue;
     }
     
     public void start(){
@@ -77,20 +82,25 @@ public class PacketCaptureService {
         PacketListener listener = (Packet packet) -> {
             if (!running) return;
             
-            CapturedPacket decoded =
+            CapturedPacket capturedPacket =
                 PacketDecoder.decode(
                     packet,
-                    handle.getTimestamp().toInstant()
+                    handle.getTimestamp().toInstant(),
+                    nif.getName()
                 );
-            if (decoded != null) {
-                stream.publish(decoded);
+            if (capturedPacket != null) {
+                stream.publish(capturedPacket);
+                boolean accepted = writeQueue.offer(capturedPacket);    
+                if (!accepted) {
+                    droppedPackets.incrementAndGet();
+                }
             }
         };
 
         try {
-            handle.loop(-1, listener); // infinite loop
+            handle.loop(-1, listener);
         } catch (InterruptedException ignored) {
-            // expected on stop()
+            
         } finally {
             if (handle.isOpen()) {
                 handle.close();
