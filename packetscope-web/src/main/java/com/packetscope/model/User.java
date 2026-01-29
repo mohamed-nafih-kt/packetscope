@@ -1,20 +1,12 @@
 package com.packetscope.model;
 
-import jakarta.persistence.*;
 
-@Entity
-@Table(name = "users")
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="user_id")
     private int userId;
 
-    @Column(name="name")
     private String username;
 
-    @Column(name="password")
     private String password;
 
 
@@ -22,7 +14,6 @@ public class User {
     public int getUserId() {
         return userId;
     }
-
 
     public String getUsername() {
         return username;
@@ -39,4 +30,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 }

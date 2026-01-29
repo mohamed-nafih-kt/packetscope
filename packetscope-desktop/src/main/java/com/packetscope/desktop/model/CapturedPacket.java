@@ -26,4 +26,60 @@ public class CapturedPacket {
             dstPort
         );
     }
+
+    public enum TransportProtocol {
+
+        ICMP(1),
+        TCP(6),
+        UDP(17),
+        ICMPV6(58),
+        UNKNOWN(0);
+
+        private final int number;
+
+        TransportProtocol(int number) {
+            this.number = number;
+        }
+
+        public int getNumber() {
+            return number;
+        }
+
+        public static TransportProtocol fromNumber(int number) {
+            for (TransportProtocol p : values()) {
+                if (p.number == number) {
+                    return p;
+                }
+            }
+            return UNKNOWN;
+        }
+    }
+    
+    public enum PacketDirection {
+
+        UNKNOWN(0),
+        OUTBOUND(1),
+        INBOUND(2);
+
+        private final int code;
+
+        PacketDirection(int code) {
+            this.code = code;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public static PacketDirection fromCode(int code) {
+            for (PacketDirection d : values()) {
+                if (d.code == code) {
+                    return d;
+                }
+            }
+            return UNKNOWN;
+        }
+    }
+
+
 }

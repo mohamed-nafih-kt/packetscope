@@ -12,7 +12,7 @@ public class LoginDao {
         User user = null;
         DbConnection dbCon = new DbConnection();
 
-        String sql = "SELECT name, password FROM users WHERE name = ? LIMIT 1";
+        String sql = "SELECT name, password FROM users WHERE username = ? LIMIT 1";
 
         try (
             Connection con = dbCon.getConnection(); 
@@ -22,7 +22,7 @@ public class LoginDao {
 
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                    user = new User(rs.getString("name"), rs.getString("password"));
+                    user = new User(rs.getString("username"), rs.getString("password"));
                     }
                 }
 

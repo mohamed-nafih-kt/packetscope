@@ -7,6 +7,8 @@ import javafx.collections.ObservableList;
 
 public class ObservablePacketStream {
     
+    private static final int MAX_ITEMS = 500;
+    
     private final ObservableList<CapturedPacket> packets = 
             FXCollections.observableArrayList();
     
@@ -16,6 +18,12 @@ public class ObservablePacketStream {
     
     public void publish(CapturedPacket packet){
         // Ensures UI-thread safety
-        Platform.runLater(() -> packets.add(packet));
+        Platform.runLater(() -> {
+            packets.add(0, packet);
+            
+            if(packets.size() > MAX_ITEMS){
+                packets.remove(MAX_ITEMS, packets.size());
+            }           
+        });
     }
 }

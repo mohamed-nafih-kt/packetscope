@@ -42,12 +42,6 @@
     <dependencies>
         <!-- Pcap4J for packet capture -->
         
-        <!--<dependency>
-            <groupId>org.pcap4j</groupId>
-            <artifactId>pcap4j-core</artifactId>
-            <version>1.7.3</version>
-        </dependency>-->
-        
         <dependency>
             <groupId>org.pcap4j</groupId>
             <artifactId>pcap4j-core</artifactId>
@@ -177,15 +171,6 @@
                 </executions>
             </plugin>
 
-            <!-- Maven exec plugin  -->
-            <!--            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <mainClass>com.packetscope.desktop.MainApp</mainClass>
-                </configuration>
-            </plugin>-->
         </plugins>
     </build>
 

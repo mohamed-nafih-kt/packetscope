@@ -4,6 +4,7 @@ import com.packetscope.desktop.service.PacketCaptureService;
 import com.packetscope.desktop.service.ObservablePacketStream;
 import com.packetscope.desktop.model.CapturedPacket;
 import javafx.animation.Timeline;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -76,6 +77,12 @@ public class PrimaryController {
         packetCaptureService =  new PacketCaptureService(packetStream);
         packetListView.setItems(packetStream.getPackets());
         startButton.setDisable(false);
+        
+        packetStream.getPackets().addListener((ListChangeListener<CapturedPacket>) c-> {
+            if(!packetStream.getPackets().isEmpty()){
+                packetListView.scrollTo(0);
+            }
+        });
         
 
     }

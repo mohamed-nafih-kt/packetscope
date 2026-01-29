@@ -6,7 +6,6 @@ import com.packetscope.model.TransactionResponseDTO;
 import com.packetscope.model.User;
 import com.packetscope.repository.TransactionRepository;
 
-import jakarta.persistence.Lob;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
