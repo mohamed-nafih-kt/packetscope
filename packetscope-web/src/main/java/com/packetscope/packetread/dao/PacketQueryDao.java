@@ -1,9 +1,13 @@
 package com.packetscope.packetread.dao;
 
+import com.packetscope.network.LocalIpService;
 import com.packetscope.packetread.model.PacketReadModel;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -12,11 +16,17 @@ import java.util.Map;
 @Repository
 public class PacketQueryDao {
 
-    private final JdbcTemplate jdbcTemplate;
     private final PacketRowMapper rowMapper = new PacketRowMapper();
+    private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedTemplate;
+    private final LocalIpService localIpService;
 
-    public PacketQueryDao(JdbcTemplate jdbcTemplate) {
+    public PacketQueryDao(JdbcTemplate jdbcTemplate,
+                          NamedParameterJdbcTemplate namedTemplate,
+                          LocalIpService localIpService) {
         this.jdbcTemplate = jdbcTemplate;
+        this.namedTemplate = namedTemplate;
+        this.localIpService = localIpService;
     }
 
     public List<PacketReadModel> fetchPacketsAfter(
@@ -145,5 +155,28 @@ public class PacketQueryDao {
     """;
 
         return jdbcTemplate.queryForList(sql, from, to);
+    }
+
+    public List<Map<String, Object>> timelineProtocolDirection(Instant since) {
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("localIps", localIpService.getLocalIps());
+        params.addValue("since", Timestamp.from(since));
+
+        return namedTemplate.queryForList("""
+        SELECT
+          DATE_FORMAT(captured_at, '%Y-%m-%d %H:%i:%s') AS bucket,
+          protocol,
+          CASE
+            WHEN source_ip IN (:localIps) THEN 2
+            WHEN destination_ip IN (:localIps) THEN 1
+            ELSE 0
+          END AS inferred_direction,
+          COUNT(*) AS cnt
+        FROM packets
+        WHERE captured_at >= :since
+        GROUP BY bucket, protocol, inferred_direction
+        ORDER BY bucket
+        """, params);
     }
 }

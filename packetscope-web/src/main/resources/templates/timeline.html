@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PacketScope Timeline</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h2>Protocol × Direction Timeline</h2>
+
+<canvas id="chart"></canvas>
+
+<script>
+    async function load() {
+        const from = new Date(Date.now() - 60_000).toISOString();
+        const to = new Date().toISOString();
+
+        const res = await fetch(`/packets/timeline/protocol-direction?from=${from}&to=${to}`);
+        const data = await res.json();
+
+        const labels = data.map(r => r.bucket);
+
+        const series = {};
+        data.forEach(row => {
+            Object.keys(row).forEach(k => {
+                if (k === "bucket") return;
+                series[k] ??= [];
+            });
+        });
+
+        data.forEach(row => {
+            Object.keys(series).forEach(k => {
+                series[k].push(row[k] ?? 0);
+            });
+        });
+
+        const datasets = Object.entries(series).map(([k, v]) => ({
+            label: k,
+            data: v,
+            tension: 0.2
+        }));
+
+        new Chart(document.getElementById("chart"), {
+            type: "line",
+            data: {
+                labels,
+                datasets
+            }
+        });
+    }
+
+    load();
+</script>
+
+</body>
+</html>

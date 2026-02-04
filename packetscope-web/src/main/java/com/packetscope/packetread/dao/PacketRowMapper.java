@@ -6,13 +6,13 @@ import org.springframework.jdbc.core.RowMapper;
 import java.net.InetAddress;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.Instant;
 
 public class PacketRowMapper implements RowMapper<PacketReadModel> {
 
     @Override
     public PacketReadModel mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new PacketReadModel(
+                rs.getLong("packet_id"),
                 rs.getTimestamp("captured_at").toInstant(),
                 rs.getInt("ip_version"),
                 decodeIp(rs.getBytes("source_ip")),
