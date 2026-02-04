@@ -179,4 +179,54 @@ public class PacketQueryDao {
         ORDER BY bucket
         """, params);
     }
+
+    public List<Map<String, Object>> activeFlows(Instant since) {
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("since", Timestamp.from(since));
+
+        return namedTemplate.queryForList("""
+        SELECT
+          protocol,
+
+          LEAST(
+            CONCAT(HEX(source_ip), ':', source_port),
+            CONCAT(HEX(destination_ip), ':', destination_port)
+          ) AS ep1,
+
+          GREATEST(
+            CONCAT(HEX(source_ip), ':', source_port),
+            CONCAT(HEX(destination_ip), ':', destination_port)
+          ) AS ep2,
+
+          COUNT(*)                AS packet_count,
+          SUM(packet_size)       AS total_bytes,
+          MIN(captured_at)       AS first_seen,
+          MAX(captured_at)       AS last_seen
+
+        FROM packets
+        WHERE captured_at >= :since
+        GROUP BY protocol, ep1, ep2
+        ORDER BY total_bytes DESC
+        LIMIT 100
+        """, params);
+    }
+
+    public List<Map<String, Object>> topTalkers(Instant since) {
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("since", Timestamp.from(since));
+
+        return namedTemplate.queryForList("""
+        SELECT
+          HEX(source_ip) AS ip,
+          SUM(packet_size) AS bytes_sent,
+          COUNT(*) AS packets
+        FROM packets
+        WHERE captured_at >= :since
+        GROUP BY source_ip
+        ORDER BY bytes_sent DESC
+        LIMIT 20
+        """, params);
+    }
 }

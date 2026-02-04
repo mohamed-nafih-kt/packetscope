@@ -96,4 +96,10 @@ public class PacketController {
                 .toList();
     }
 
+    @GetMapping("/talkers")
+    public List<Map<String, Object>> topTalkers(
+            @RequestParam(defaultValue = "60") int seconds) {
+
+        return dao.topTalkers(Instant.now().minusSeconds(seconds));
+    }
 }
