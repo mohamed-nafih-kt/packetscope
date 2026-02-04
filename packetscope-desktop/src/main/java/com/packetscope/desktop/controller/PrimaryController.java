@@ -82,7 +82,7 @@ public class PrimaryController {
     public void setPacketStream(ObservablePacketStream packetStream) {
         this.packetStream = packetStream;    
         
-        PacketWriteQueue writeQueue = new PacketWriteQueue(1000);
+        PacketWriteQueue writeQueue = new PacketWriteQueue(20);
         packetCaptureService =  new PacketCaptureService(packetStream, writeQueue);
         
         DbConnection dbConnection = new DbConnection();
