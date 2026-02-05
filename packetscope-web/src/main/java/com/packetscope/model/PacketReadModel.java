@@ -1,4 +1,4 @@
-package com.packetscope.packetread.model;
+package com.packetscope.model;
 
 import java.time.Instant;
 

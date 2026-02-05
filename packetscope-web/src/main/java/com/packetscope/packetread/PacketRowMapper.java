@@ -1,16 +1,16 @@
-package com.packetscope.packetread.dao;
+package com.packetscope.packetread;
 
-import com.packetscope.packetread.model.PacketReadModel;
-import org.springframework.jdbc.core.RowMapper;
+import com.packetscope.model.PacketReadModel;
 
 import java.net.InetAddress;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
-public class PacketRowMapper implements RowMapper<PacketReadModel> {
+public final class PacketRowMapper {
 
-    @Override
-    public PacketReadModel mapRow(ResultSet rs, int rowNum) throws SQLException {
+    private PacketRowMapper() {}
+
+    public static PacketReadModel map(ResultSet rs) throws Exception {
+
         return new PacketReadModel(
                 rs.getLong("packet_id"),
                 rs.getTimestamp("captured_at").toInstant(),
@@ -26,8 +26,10 @@ public class PacketRowMapper implements RowMapper<PacketReadModel> {
         );
     }
 
-    private String decodeIp(byte[] raw) {
+    private static String decodeIp(byte[] raw) {
+
         if (raw == null) return null;
+
         try {
             return InetAddress.getByAddress(raw).getHostAddress();
         } catch (Exception e) {

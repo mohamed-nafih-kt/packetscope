@@ -9,8 +9,8 @@ import java.util.Properties;
 
 public class DbConnection {
     private Connection con;
-    InputStream is = getClass().getClassLoader().getResourceAsStream("config-" + System.getProperty("env") + ".properties");
     
+    InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config-" + System.getProperty("env") + ".properties");
     
     public DbConnection() {
         
@@ -18,15 +18,15 @@ public class DbConnection {
         String env = System.getProperty("env", "dev"); 
         String configFileName = "config-" + env + ".properties";
         
-        Properties props = new Properties();
+        Properties properties = new Properties();
         
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream(configFileName)) {
-            if (is == null) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(configFileName)) {
+            if (inputStream == null) {
                 throw new IOException("Could not find configuration file: " + configFileName);
             }
-            props.load(is);
+            properties.load(inputStream);
             
-            setConnection(props);
+            setConnection(properties);
                     
         } catch (IOException e) {
             System.err.println("Failed to load database configuration: " + e.getMessage());

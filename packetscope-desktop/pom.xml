@@ -10,6 +10,7 @@
     <artifactId>packetscope-desktop</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    
     <!-- manage developement and production profiles -->
     <profiles>
         <profile>
