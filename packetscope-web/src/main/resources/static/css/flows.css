@@ -1,0 +1,78 @@
+
+:root {
+    --bg: #0b0f14;
+    --panel: rgba(20,25,32,0.9);
+    --grid: rgba(255,255,255,0.05);
+    --text: #c9d1d9;
+    --accent: #00e5ff;
+}
+
+html, body {
+    margin: 0;
+    height: 100%;
+    background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        var(--bg);
+    background-size: 40px 40px;
+    font-family: "Michroma", sans-serif, system-ui, monospace;
+    color: var(--text);
+}
+
+.container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 30px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.title {
+    font-size: 20px;
+    letter-spacing: 1px;
+}
+
+.status {
+    font-size: 12px;
+    color: #7cff6b;
+}
+
+.panel {
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 0 40px rgba(0,229,255,0.08);
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 12px;
+}
+
+th, td {
+    padding: 6px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+th {
+    text-align: left;
+    color: var(--accent);
+    font-weight: 500;
+}
+
+tbody tr:hover {
+    background: rgba(0,229,255,0.08);
+}
+
+.footer {
+    font-family:  system-ui, monospace;
+    margin-top: 10px;
+    font-size: 11px;
+    opacity: 0.6;
+}

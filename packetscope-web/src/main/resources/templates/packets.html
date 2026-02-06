@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PacketScope — Raw Packets</title>
+
+    <link href="/static/css/packets.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet"/>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <div class="title">PacketScope · Raw Packets</div>
+        <div class="status">LIVE</div>
+    </div>
+
+    <div class="panel">
+        <table id="packets">
+            <thead>
+            <tr>
+                <th>Time</th>
+                <th>Src IP</th>
+                <th>Dst IP</th>
+                <th>Proto</th>
+                <th>Src Port</th>
+                <th>Dst Port</th>
+                <th>Bytes</th>
+                <th>Interface</th>
+                <th>Dir</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        Cursor-based fetch · Last 60s · Updated every 2s
+    </div>
+
+</div>
+
+<script src="/static/js/packets.js" defer></script>
+
+</body>
+</html>

@@ -1,46 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>PacketScope — Top Talkers</title>
+
+    <link href="/static/css/talkers.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap"     rel="stylesheet"/>
+
 </head>
 
 <body>
 
-<h2>Top Talkers (last 60s)</h2>
+<div class="container">
 
-<table border="1" id="talkers">
-    <thead>
-    <tr>
-        <th>IP (HEX)</th>
-        <th>Bytes Sent</th>
-        <th>Packets</th>
-    </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+    <div class="header">
+        <div class="title">PacketScope · Top Talkers</div>
+        <div class="status">LIVE</div>
+    </div>
 
-<script>
-    async function refresh() {
-        const res = await fetch('/flows/talkers');
-        const data = await res.json();
+    <div class="panel">
+        <table id="talkers">
+            <thead>
+            <tr>
+                <th>Source IP (HEX)</th>
+                <th>Bytes Sent</th>
+                <th>Packets</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 
-        const tbody = document.querySelector('#talkers tbody');
-        tbody.innerHTML = '';
+    <div class="footer">
+        Highest outbound sources · Updated every 2s
+    </div>
 
-        data.forEach(r => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${r.ip}</td>
-                <td>${r.bytes_sent}</td>
-                <td>${r.packets}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
+</div>
 
-    setInterval(refresh, 2000);
-    refresh();
-</script>
+<script src="/static/js/talkers.js" defer></script>
 
 </body>
 </html>

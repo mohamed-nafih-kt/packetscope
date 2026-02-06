@@ -1,56 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>PacketScope Timeline</title>
+    <meta charset="UTF-8">
+    <title>PacketScope — Timeline</title>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap"  rel="stylesheet"/>
+    <link href="/static/css/timeline.css"   rel="stylesheet" />
+
 </head>
+
 <body>
 
-<h2>Protocol × Direction Timeline</h2>
+<div class="container">
 
-<canvas id="chart"></canvas>
+    <div class="header">
+        <div class="title">PacketScope · Protocol × Direction Timeline</div>
+        <div class="status">LIVE</div>
+    </div>
 
-<script>
-    async function load() {
-        const from = new Date(Date.now() - 60_000).toISOString();
-        const to = new Date().toISOString();
+    <div class="panel">
+        <canvas id="chart"></canvas>
+    </div>
 
-        const res = await fetch(`/packets/timeline/protocol-direction?from=${from}&to=${to}`);
-        const data = await res.json();
+    <div class="footer">
+        Last 60 seconds · Java 21 · Raw Telemetry
+    </div>
 
-        const labels = data.map(r => r.bucket);
+</div>
 
-        const series = {};
-        data.forEach(row => {
-            Object.keys(row).forEach(k => {
-                if (k === "bucket") return;
-                series[k] ??= [];
-            });
-        });
-
-        data.forEach(row => {
-            Object.keys(series).forEach(k => {
-                series[k].push(row[k] ?? 0);
-            });
-        });
-
-        const datasets = Object.entries(series).map(([k, v]) => ({
-            label: k,
-            data: v,
-            tension: 0.2
-        }));
-
-        new Chart(document.getElementById("chart"), {
-            type: "line",
-            data: {
-                labels,
-                datasets
-            }
-        });
-    }
-
-    load();
-</script>
+<script src="/static/js/timeline.js" defer></script>
 
 </body>
 </html>

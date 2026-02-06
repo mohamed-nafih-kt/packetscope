@@ -1,60 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>PacketScope — Active Flows</title>
-    <style>
-        body { font-family: sans-serif; padding: 20px; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ccc; padding: 6px; }
-        th { background: #eee; }
-    </style>
+
+    <link href="/static/css/flows.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap"     rel="stylesheet">
+
+
 </head>
 
 <body>
 
-<h2>Active Flows (last 60s)</h2>
+<div class="container">
 
-<table id="flows">
-    <thead>
-    <tr>
-        <th>Protocol</th>
-        <th>Endpoint 1</th>
-        <th>Endpoint 2</th>
-        <th>Packets</th>
-        <th>Bytes</th>
-        <th>First Seen</th>
-        <th>Last Seen</th>
-    </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+    <div class="header">
+        <div class="title">PacketScope · Active Flows</div>
+        <div class="status">LIVE</div>
+    </div>
 
-<script>
-    async function refresh() {
-        const res = await fetch('/flows/active');
-        const data = await res.json();
+    <div class="panel">
+        <table id="flows">
+            <thead>
+            <tr>
+                <th>Proto</th>
+                <th>Endpoint A</th>
+                <th>Endpoint B</th>
+                <th>Packets</th>
+                <th>Bytes</th>
+                <th>First Seen</th>
+                <th>Last Seen</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 
-        const tbody = document.querySelector('#flows tbody');
-        tbody.innerHTML = '';
+    <div class="footer">
+        Updated every 2s · 5-tuple normalized conversations
+    </div>
 
-        data.forEach(r => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${r.protocol}</td>
-                <td>${r.ep1}</td>
-                <td>${r.ep2}</td>
-                <td>${r.packet_count}</td>
-                <td>${r.total_bytes}</td>
-                <td>${r.first_seen}</td>
-                <td>${r.last_seen}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
+</div>
 
-    setInterval(refresh, 2000);
-    refresh();
-</script>
+<script src="/static/js/flows.js" defer></script>
 
 </body>
 </html>

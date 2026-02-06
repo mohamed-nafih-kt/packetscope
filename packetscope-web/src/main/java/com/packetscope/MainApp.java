@@ -1,9 +1,8 @@
 package com.packetscope;
 
-import com.packetscope.http.TalkersHandler;
+import com.packetscope.http.*;
 import com.packetscope.db.PacketQueryDao;
 import com.packetscope.db.Db;
-import com.packetscope.http.TimelineProtocolDirectionHandler;
 
 import com.sun.net.httpserver.HttpServer;
 import java.net.InetSocketAddress;
@@ -23,24 +22,16 @@ public final class MainApp{
         }
 //
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
-//
-
-//        server.createContext("/timeline", new TimelineHandler(db));
-
-        server.createContext(
-                "/timeline/protocol-direction",
-                new TimelineProtocolDirectionHandler(dao)
-        );
-
-//        server.createcontext("/flows", new FlowHandler(db));
-//        server.createContext("/talkers", new TalkersHandler(db));
-//
-//        Static files (index.html, flows.html, etc)
-//        server.createContext("/", new StaticHandler("static"));
-//
-//        server.setExecutor(Executors.newFixedThreadPool(8));
-//        server.start();
-
         System.out.println("Web listening on " +  server.getAddress().getHostName() + ":" + server.getAddress().getPort());
+
+        server.createContext("/", new StaticHandler("src/main/resources/"));
+        server.createContext("/timeline/protocol-direction", new TimelineProtocolDirectionHandler(dao));
+        server.createContext("/flows", new FlowsHandler(dao));
+        server.createContext("/talkers", new TalkersHandler(dao));
+        server.createContext("/packets", new PacketsHandler(dao));
+//
+//        Static files (index.html, flows.html)
+//        server.setExecutor(Executors.newFixedThreadPool(8));
+        server.start();
     }
 }

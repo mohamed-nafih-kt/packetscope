@@ -8,7 +8,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url("/images/main-background.jpg") no-repeat center center fixed;
+  /* background: url("/images/main-background.webp") no-repeat center center fixed; */
   background-size:cover;
   font-family: 'Michroma', sans-serif;
 }
