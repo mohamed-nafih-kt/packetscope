@@ -1,5 +1,5 @@
 :root {
-    --bg: #0b0f14;
+    --bg: rgb(12, 12, 12);
     --panel: rgba(20,25,32,0.9);
     --grid: rgba(255,255,255,0.05);
     --text: #c9d1d9;
@@ -19,7 +19,7 @@ html, body {
 }
 
 .container {
-    max-width: 900px;
+    max-width: 1600px;
     margin: auto;
     padding: 30px;
 }
@@ -51,11 +51,11 @@ html, body {
 table {
     border-collapse: collapse;
     width: 100%;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 th, td {
-    padding: 8px;
+    padding: 5px 8px;
     border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 

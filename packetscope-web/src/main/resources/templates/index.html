@@ -35,31 +35,43 @@
         <div class="section-title">Monitor</div>
 
         <div class="grid">
-          <a class="tile" href="/templates/timeline.html">
-            <h3>Timeline</h3>
-            <p>Protocol × direction over time</p>
-          </a>
+            <div class="tile active" role="button" tabindex="0" onclick="load('/templates/timeline.html', this)">
+                <h3>Timeline</h3>
+                <p>Protocol × direction over time</p>
+            </div>
 
-          <a class="tile" href="/templates/flows.html">
-            <h3>Flows</h3>
-            <p>Active conversations</p>
-          </a>
+            <div class="tile" role="button" tabindex="0" onclick="load('/templates/flows.html', this)">
+                <h3>Flows</h3>
+                <p>Active conversations</p>
+            </div>
 
-          <a class="tile" href="/templates/talkers.html">
-            <h3>Talkers</h3>
-            <p>Top bandwidth sources</p>
-          </a>
+            <div class="tile" role="button" tabindex="0" onclick="load('/templates/talkers.html', this)">
+                <h3>Talkers</h3>
+                <p>Top bandwidth sources</p>
+            </div>
 
-          <a class="tile" href="/templates/packets.html">
-            <h3>Packets</h3>
-            <p>Raw packet telemetry</p>
-          </a>
+            <div class="tile" role="button" tabindex="0" onclick="load('/templates/packets.html', this)">
+                <h3>Packets</h3>
+                <p>Raw packet telemetry</p>
+            </div>
         </div>
-
-        <div class="footer">
-          Java 21 · Passive Capture + Active Control · Framework-Free
-        </div>
+          <iframe id="view" src="/templates/timeline.html"></iframe>
+<!--        <div class="footer">-->
+<!--          Java 21 · Passive Capture + Active Control · Framework-Free-->
+<!--        </div>-->
       </div>
     </div>
+
+    <script>
+        function load(page, btn) {
+            document.getElementById("view").src = page;
+
+            document.querySelectorAll(".grid div").forEach(b =>
+                b.classList.remove("active")
+            );
+
+            btn.classList.add("active");
+        }
+    </script>
   </body>
 </html>

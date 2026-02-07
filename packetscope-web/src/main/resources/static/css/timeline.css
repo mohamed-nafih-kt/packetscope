@@ -1,13 +1,14 @@
 :root {
-    --bg: #0b0f14;
-    --panel: rgba(20,25,32,0.9);
-    --grid: rgba(255,255,255,0.05);
+    --bg: rgb(12, 12, 12);
+    --panel: rgba(20, 25, 32, 0.9);
+    --grid: rgba(255, 255, 255, 0.05);
     --text: #c9d1d9;
     --accent: #00e5ff;
     --accent2: #7cff6b;
 }
 
-html, body {
+html,
+body {
     margin: 0;
     height: 100%;
     background:
@@ -20,7 +21,7 @@ html, body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: auto;
     padding: 30px;
 }
@@ -28,8 +29,8 @@ html, body {
 .header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+    /* align-items: center; */
+    margin-bottom: 15px;
 }
 
 .title {
@@ -44,19 +45,19 @@ html, body {
 
 .panel {
     background: var(--panel);
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 0 40px rgba(0,229,255,0.08);
+    box-shadow: 0 0 40px rgba(79, 162, 250, 0.1);
 }
 
 canvas {
     width: 100% !important;
-    height: 400px !important;
+    height: 500px !important;
 }
 
 .footer {
-    font-family:  system-ui, monospace;
+    font-family: system-ui, monospace;
     margin-top: 12px;
     font-size: 11px;
     opacity: 0.6;
