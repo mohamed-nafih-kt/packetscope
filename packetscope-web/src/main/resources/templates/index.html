@@ -1,21 +1,65 @@
 <!doctype html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PacketScope | Home</title>
-    <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap"     rel="stylesheet"/>
-    <link rel="stylesheet" href="static/css/index.css" />
-    <link rel="stylesheet" href="../static/css/index.css" />
-</head>
-<body>
-<h2>PacketScope</h2>
+    <title>PacketScope</title>
 
-<ul>
-    <li><a href="/templates/timeline.html">Timeline</a></li>
-    <li><a href="/templates/flows.html">Active Flows</a></li>
-    <li><a href="/templates/talkers.html">Top Talkers</a></li>
-    <li><a href="/templates/packets.html">Raw Packets</a></li>
-</ul>
-</body>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Michroma&display=swap"
+      rel="stylesheet"
+    />
+
+    <link href="/static/css/index.css" rel="stylesheet" />
+
+  </head>
+
+  <body>
+    <div class="app">
+      <div class="sidebar">
+        <div class="logo">
+          <img
+            src="/static/images/packetscopeLogo.jpeg"
+            style="height: 50px; width: 50px"
+            alt="logo"
+          />
+          <p>PacketScope</p>
+        </div>
+
+        <div class="nav">
+          <a class="active" href="/monitor">Monitor</a>
+          <a href="/templates/probe.html">Console</a>
+        </div>
+      </div>
+
+      <div class="main">
+        <div class="section-title">Monitor</div>
+
+        <div class="grid">
+          <a class="tile" href="/templates/timeline.html">
+            <h3>Timeline</h3>
+            <p>Protocol × direction over time</p>
+          </a>
+
+          <a class="tile" href="/templates/flows.html">
+            <h3>Flows</h3>
+            <p>Active conversations</p>
+          </a>
+
+          <a class="tile" href="/templates/talkers.html">
+            <h3>Talkers</h3>
+            <p>Top bandwidth sources</p>
+          </a>
+
+          <a class="tile" href="/templates/packets.html">
+            <h3>Packets</h3>
+            <p>Raw packet telemetry</p>
+          </a>
+        </div>
+
+        <div class="footer">
+          Java 21 · Passive Capture + Active Control · Framework-Free
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
