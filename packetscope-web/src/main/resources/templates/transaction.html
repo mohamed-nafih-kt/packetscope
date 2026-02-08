@@ -15,7 +15,8 @@
     <div class="request-row">
         <div class="search-box">
             <div class="select-wrapper">
-                <label for="http-method"></label><select id="http-method">
+                <label for="http-method" class="visually-hidden">http method</label>
+                <select id="http-method">
                     <option value="GET">GET</option>
                     <option value="POST">POST</option>
                     <option value="PUT">PUT</option>
@@ -23,7 +24,8 @@
                     <option value="PATCH">PATCH</option>
                 </select>
             </div>
-            <label for="request-url"></label><input id="request-url" type="text" placeholder="Enter URL to monitor traffic..." autofocus />
+            <label for="request-url" class="visually-hidden">Request URL</label>
+            <input id="request-url" type="text" placeholder="Enter URL to monitor traffic..." autofocus />
             <button id="send-request">Send</button>
         </div>
     </div>
@@ -33,10 +35,10 @@
         <div id="query-params">
             <div class="param-row">
                 <label>
-                    <input type="text" placeholder="Key" />
+                    <input class="parameter" type="text" placeholder="Key" />
                 </label>
                 <label>
-                    <input type="text" placeholder="Value" />
+                    <input class="parameter" type="text" placeholder="Value" />
                 </label>
                 <button class="remove-param">X</button>
             </div>
@@ -47,10 +49,10 @@
         <div id="headers">
             <div class="header-row">
                 <label>
-                    <input type="text" placeholder="Header Name" />
+                    <input class="parameter" type="text" placeholder="Header Name" />
                 </label>
                 <label>
-                    <input type="text" placeholder="Header Value" />
+                    <input class="parameter" type="text" placeholder="Header Value" />
                 </label>
                 <button class="remove-header">X</button>
             </div>
@@ -92,5 +94,6 @@
     </div>
     <button class="save-btn" id="save-request">Save</button>
 </section>
+<script src="/static/js/transaction.js" defer></script>
 </body>
 </html>
