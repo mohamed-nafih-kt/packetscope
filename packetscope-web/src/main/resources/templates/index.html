@@ -1,77 +1,72 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>PacketScope</title>
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Michroma&display=swap"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <title>PacketScope</title>
 
-    <link href="/static/css/index.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet" />
 
-  </head>
+  <link href="/static/css/index.css" rel="stylesheet" />
+</head>
 
-  <body>
-    <div class="app">
-      <div class="sidebar">
-        <div class="logo">
-          <img
-            src="/static/images/packetscopeLogo.jpeg"
-            style="height: 50px; width: 50px"
-            alt="logo"
-          />
-          <p>PacketScope</p>
-        </div>
-
-        <div class="nav">
-          <a class="active" href="/monitor">Monitor</a>
-          <a href="/templates/probe.html">Console</a>
-        </div>
+<body>
+  <div class="app">
+    <div class="sidebar">
+      <div class="logo">
+        <img src="/static/images/packetscopeLogo.jpeg" style="height: 50px; width: 50px" alt="logo" />
+        <p>PacketScope</p>
       </div>
 
-      <div class="main">
-        <div class="section-title">Monitor</div>
-
-        <div class="grid">
-            <div class="tile active" role="button" tabindex="0" onclick="load('/templates/timeline.html', this)">
-                <h3>Timeline</h3>
-                <p>Protocol × direction over time</p>
-            </div>
-
-            <div class="tile" role="button" tabindex="0" onclick="load('/templates/flows.html', this)">
-                <h3>Flows</h3>
-                <p>Active conversations</p>
-            </div>
-
-            <div class="tile" role="button" tabindex="0" onclick="load('/templates/talkers.html', this)">
-                <h3>Talkers</h3>
-                <p>Top bandwidth sources</p>
-            </div>
-
-            <div class="tile" role="button" tabindex="0" onclick="load('/templates/packets.html', this)">
-                <h3>Packets</h3>
-                <p>Raw packet telemetry</p>
-            </div>
-        </div>
-          <iframe id="view" src="/templates/timeline.html"></iframe>
-<!--        <div class="footer">-->
-<!--          Java 21 · Passive Capture + Active Control · Framework-Free-->
-<!--        </div>-->
+      <div class="nav">
+        <a class="active" href="/monitor">Monitor</a>
+        <a href="/templates/probe.html">Console</a>
+        <a href="probe.html">Console</a>
       </div>
     </div>
 
-    <script>
-        function load(page, btn) {
-            document.getElementById("view").src = page;
+    <main class="main">
+      <div class="section-title">Monitor</div>
 
-            document.querySelectorAll(".grid div").forEach(b =>
-                b.classList.remove("active")
-            );
+      <div class="grid">
+        <div class="tile active" role="button" tabindex="0" onclick="load('/templates/timeline.html', this)">
+          <h3>Timeline</h3>
+          <p>Protocol × direction over time</p>
+        </div>
 
-            btn.classList.add("active");
-        }
-    </script>
-  </body>
+        <div class="tile" role="button" tabindex="0" onclick="load('/templates/flows.html', this)">
+          <h3>Flows</h3>
+          <p>Active conversations</p>
+        </div>
+
+        <div class="tile" role="button" tabindex="0" onclick="load('/templates/talkers.html', this)">
+          <h3>Talkers</h3>
+          <p>Top bandwidth sources</p>
+        </div>
+
+        <div class="tile" role="button" tabindex="0" onclick="load('/templates/packets.html', this)">
+          <h3>Packets</h3>
+          <p>Raw packet telemetry</p>
+        </div>
+      </div>
+      <iframe id="view" src="/templates/timeline.html"></iframe>
+      <!--        <div class="footer">-->
+      <!--          Java 21 · Passive Capture + Active Control · Framework-Free-->
+      <!--        </div>-->
+    </main>
+  </div>
+
+  <script>
+    function load(page, btn) {
+      document.getElementById("view").src = page;
+
+      document
+        .querySelectorAll(".grid div")
+        .forEach((b) => b.classList.remove("active"));
+
+      btn.classList.add("active");
+    }
+  </script>
+</body>
+
 </html>

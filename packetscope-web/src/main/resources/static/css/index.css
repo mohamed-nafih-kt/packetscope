@@ -1,118 +1,119 @@
 :root {
---bg: rgb(12, 12, 12);
---panel: rgb(17, 17, 17);
---grid: rgba(255, 255, 255, 0.04);
---text: rgb(210, 210, 210);
---accent: rgb(79, 127, 250);
+  --bg: rgb(12, 12, 12);
+  --panel: rgb(17, 17, 17);
+  --grid: rgba(255, 255, 255, 0.04);
+  --text: rgb(210, 210, 210);
+  --accent: rgb(79, 127, 250);
 }
 
 html,
 body {
-margin: 0;
-height: 100%;
-background:
-  linear-gradient(var(--grid) 1px, transparent 1px),
-  linear-gradient(90deg, var(--grid) 1px, transparent 1px), var(--panel);
-background-size: 40px 40px;
-font-family: system-ui, monospace;
-color: var(--text);
+  margin: 0;
+  height: 100%;
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px), var(--panel);
+  background-size: 40px 40px;
+  font-family: "Michroma", sans-serif, system-ui, monospace;
+  color: var(--text);
 }
 
 .app {
-display: flex;
-height: 100vh;
+  display: flex;
+  height: 100vh;
 }
 
 .sidebar {
-width: 220px;
-background: var(--bg);
-border-right: 1px solid rgba(255, 255, 255, 0.08);
-padding: 20px;
+  width: 220px;
+  background: var(--bg);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px;
 }
 
 .logo {
-font-family: Michroma;
-letter-spacing: 2px;
-margin-bottom: 30px;
+  display: flex;
+  letter-spacing: 2px;
+  margin-bottom: 30px;
 }
 
 .nav a {
-display: block;
-padding: 10px 12px;
-margin-bottom: 6px;
-color: var(--text);
-text-decoration: none;
-border-radius: 6px;
+  display: block;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  color: var(--text);
+  text-decoration: none;
+  border-radius: 6px;
 }
 
 .nav a:hover {
-background: rgba(0, 220, 255, 0.12);
+  background: #1a73e82f;
 }
 
 .nav .active {
-background: rgba(0, 220, 255, 0.22);
-color: var(--accent);
+  background: rgba(0, 220, 255, 0.22);
+  color: var(--accent);
 }
 
 .main {
-flex: 1;
-display: flex;
-flex-direction: column;
-padding:0 30px;
-overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 30px;
+  overflow: hidden;
 }
 
 .section-title {
-font-size: 18px;
-margin-bottom: 15px;
-letter-spacing: 1px;
+  font-size: 18px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
 }
 
 .grid {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
 }
 
 .tile {
-background: var(--panel);
-border: 1px solid rgba(255, 255, 255, 0.07);
-border-radius: 10px;
-padding: 18px;
-text-decoration: none;
-color: var(--text);
-transition: 0.2s;
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 18px;
+  text-decoration: none;
+  color: var(--text);
+  transition: 0.2s;
 }
 
 .tile:hover {
-cursor: pointer;
-transform: translateY(-3px);
-box-shadow: 0 0 20px rgba(79, 127, 250, 0.75);
+  cursor: pointer;
+  transform: translateY(-3px);
+  box-shadow: 0 0 20px rgba(79, 127, 250, 0.75);
 }
 
 .tile h3 {
-margin: 0 0 6px 0;
-color: var(--accent);
-font-weight: 500;
+  margin: 0 0 6px 0;
+  color: var(--accent);
+  font-weight: 500;
 }
 
 .tile p {
-margin: 0;
-font-size: 12px;
-opacity: 0.75;
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.75;
 }
 
 .footer {
-margin-top: 30px;
-font-size: 11px;
-opacity: 0.55;
+  margin-top: 30px;
+  font-size: 11px;
+  opacity: 0.55;
 }
 
 iframe {
-  width:100%;
-  flex:1;
+  width: 100%;
+  flex: 1;
   border: 1px solid transparent;
   border-radius: 20px;
   margin: 10px 0 10px 0;
-  background:transparent;
+  background: transparent;
 }

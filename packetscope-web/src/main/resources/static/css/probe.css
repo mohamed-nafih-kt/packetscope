@@ -1,6 +1,14 @@
 /* Global Styles */
 @import url("https://fonts.googleapis.com/css2?family=Michroma&display=swap");
 
+:root {
+  --bg: rgb(12, 12, 12);
+  --panel: rgb(17, 17, 17);
+  --grid: rgba(255, 255, 255, 0.04);
+  --text: rgb(210, 210, 210);
+  --accent: rgb(79, 127, 250);
+}
+
 html,
 body {
   height: 100%;
@@ -9,28 +17,48 @@ body {
 
 body {
   margin: 0;
-  font-family: "Michroma", sans-serif;
-  background-color: #1c1c1c;
-  background: url("/static/images/main-background.webp") no-repeat center center fixed;
-  background-size: cover;
-  color: #ffffff;
+  height: 100%;
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px), var(--panel);
+  font-family: "Michroma", sans-serif, system-ui, monospace;
+  /* background: url("../images/main-background.webp") no-repeat center center
+    fixed; */
+  background-size: 40px 40px;
+  color: var(--text);
 }
 
-/* Navbar */
-.navbar {
+.app {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.3);
-  padding: 0px 30px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  height: 100vh;
+}
+
+/* ----------------- sidebar ----------------- */
+.sidebar {
+  width: 220px;
+  background: var(--bg);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px;
 }
 
 .logo {
   display: flex;
-  align-items: center;
-  padding: 0;
-  margin: 0;
+  letter-spacing: 2px;
+  margin-bottom: 30px;
+}
+
+.nav a {
+  display: block;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  color: var(--text);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.1s ease-in-out;
+}
+
+.nav a:hover {
+  background: #1a73e82f;
 }
 
 .logo h1 {
@@ -44,6 +72,60 @@ body {
 .logo img {
   height: 50px;
   width: 50px;
+}
+
+/*  ----------- main ------------*/
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 30px;
+  overflow-y: auto;
+  min-height: calc(100vh - 70px);
+  margin-top: 10px;
+}
+
+.section-title {
+  font-size: 18px;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+}
+
+/* -------- navbar ---------- */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.tile {
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 18px;
+  text-decoration: none;
+  color: var(--text);
+  transition: 0.2s;
+}
+
+.tile:hover {
+  cursor: pointer;
+  transform: translateY(-3px);
+  box-shadow: 0 0 20px rgba(79, 127, 250, 0.75);
+}
+
+.tile h3 {
+  margin: 0 0 6px 0;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.tile p {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.75;
 }
 
 .nav-links {
@@ -83,26 +165,21 @@ body {
 
 /* Main Container */
 
-.main-container {
-  min-height: calc(100vh - 70px);
-  overflow-y: auto;
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-}
-
 .main-container h2 {
   margin: 10px 0;
   color: rgba(60, 70, 160, 1);
   align-self: center;
 }
 
+.contents {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 20px;
+}
 /* Request Panel */
 .request-panel {
-  width: 80%;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -290,7 +367,6 @@ textarea#request-body {
 /* Response Panel */
 
 .response-panel {
-  width: 80%;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -365,6 +441,7 @@ textarea#request-body {
 
 /* save button */
 .save-btn {
+  height: 44px;
   width: 120px;
   background-color: #1c1c1c;
   color: white;
