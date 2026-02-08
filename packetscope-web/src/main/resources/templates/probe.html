@@ -6,8 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PacketScope - Probe</title>
   <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/static/css/probe.css" />
-  <link href="../static/css/probe.css" rel="stylesheet" />
+  <link href="/static/css/probe.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -18,18 +17,10 @@
         <p>PacketScope</p>
       </div>
       <div class="nav">
-        <a class="active" href="monitor.html">Monitor</a>
-        <a href="probe.html">Console</a>
+        <a class="active" href="/templates/index.html">Monitor</a>
+        <a href="/templates/probe.html">Console</a>
       </div>
     </div>
-    <!-- Navbar -->
-    <!-- <nav class="navbar">
-        <ul class="nav-links">
-          <li><a href="#">Monitor</a></li>
-          <li><a href="./probe.html">Probe</a></li>
-          <li><a href="#">Transactions</a></li>
-        </ul>
-      </nav> -->
 
     <!-- Main Section -->
     <main class="main">
@@ -45,83 +36,11 @@
           <p>Sent requests</p>
         </div>
       </div>
-      <!-- REQUEST SECTION -->
-      <div class="contents">
-        <section class="request-panel">
-          <h2>Request</h2>
-          <div class="request-row">
-            <div class="search-box">
-              <div class="select-wrapper">
-                <select id="http-method">
-                  <option value="GET">GET</option>
-                  <option value="POST">POST</option>
-                  <option value="PUT">PUT</option>
-                  <option value="DELETE">DELETE</option>
-                  <option value="PATCH">PATCH</option>
-                </select>
-              </div>
-              <input id="request-url" type="text" placeholder="Enter URL to monitor traffic..." autofocus />
-              <button id="send-request">Send</button>
-            </div>
-          </div>
 
-          <div class="request-section">
-            <h3>Query Parameters</h3>
-            <div id="query-params">
-              <div class="param-row">
-                <input type="text" placeholder="Key" />
-                <input type="text" placeholder="Value" />
-                <button class="remove-param">X</button>
-              </div>
-              <button id="add-param">+ Add Parameter</button>
-            </div>
 
-            <h3>Headers</h3>
-            <div id="headers">
-              <div class="header-row">
-                <input type="text" placeholder="Header Name" />
-                <input type="text" placeholder="Header Value" />
-                <button class="remove-header">X</button>
-              </div>
-              <button id="add-header">+ Add Header</button>
-            </div>
+      <iframe id="view" src="/templates/transaction.html" class="contents">
 
-            <h3>Body (for POST/PUT)</h3>
-            <textarea id="request-body" placeholder="Raw JSON or text"></textarea>
-          </div>
-        </section>
-
-        <!-- RESPONSE SECTION -->
-        <section class="response-panel">
-          <h2>Response</h2>
-
-          <div class="response-tabs">
-            <button class="tab active" data-target="response-results">
-              Result
-            </button>
-            <button class="tab" data-target="response-body">Body</button>
-            <button class="tab" data-target="response-headers">Headers</button>
-            <button class="tab" data-target="response-cookies">Cookies</button>
-          </div>
-
-          <!-- Tab Contents -->
-          <div class="tab-content">
-            <div id="response-results" class="tab-pane active">
-              <pre id="result-status">Awaiting request...</pre>
-            </div>
-            <div id="response-body" class="tab-pane">
-              <pre id="result-body">(empty)</pre>
-            </div>
-            <div id="response-headers" class="tab-pane">
-              <pre id="result-headers">(empty)</pre>
-            </div>
-            <div id="response-cookies" class="tab-pane">
-              <pre id="result-cookies">(empty)</pre>
-            </div>
-          </div>
-          <button class="save-btn" id="save-request">Save</button>
-        </section>
-      </div>
+      </iframe>
     </main>
   </div>
 </body>
