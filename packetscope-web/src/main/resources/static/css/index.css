@@ -1,3 +1,6 @@
+/* Global Styles */
+@import url("https://fonts.googleapis.com/css2?family=Michroma&display=swap");
+
 :root {
   --bg: rgb(12, 12, 12);
   --panel: rgb(17, 17, 17);
@@ -46,14 +49,27 @@ body {
 }
 
 .nav a:hover {
-  background: #1a73e82f;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .nav .active {
-  background: rgba(0, 220, 255, 0.22);
-  color: var(--accent);
+  background: rgba(255, 255, 255, 0.05);
 }
 
+ .logo h1 {
+  font-size: 20px;
+  color: #1a73e8;
+  font-weight: bold;
+  padding: 0;
+  margin: 0;
+}
+
+.logo img {
+  height: 50px;
+  width: 50px;
+}
+
+/*  ----------- main ------------*/
 .main {
   flex: 1;
   display: flex;
@@ -68,6 +84,8 @@ body {
   margin-bottom: 15px;
   letter-spacing: 1px;
 }
+
+/* -------- tabs ---------- */
 
 .grid {
   display: grid;
@@ -103,17 +121,18 @@ body {
   opacity: 0.75;
 }
 
-.footer {
-  margin-top: 30px;
-  font-size: 11px;
-  opacity: 0.55;
-}
+/* Main Container */
 
 iframe {
   width: 100%;
   flex: 1;
-  border: 1px solid transparent;
   border-radius: 20px;
   margin: 10px 0 10px 0;
   background: transparent;
+}
+
+.footer {
+  margin-top: 30px;
+  font-size: 11px;
+  opacity: 0.55;
 }

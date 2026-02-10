@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Transactions</title>
 
-    <link href="/static/css/transaction.css" rel="stylesheet" />
+    <link href="/static/css/new-request.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap"     rel="stylesheet"/>
 
 </head>
@@ -14,16 +14,23 @@
     <h2>Request</h2>
     <div class="request-row">
         <div class="search-box">
-            <div class="select-wrapper">
-                <label for="http-method" class="visually-hidden">http method</label>
-                <select id="http-method">
-                    <option value="GET">GET</option>
-                    <option value="POST">POST</option>
-                    <option value="PUT">PUT</option>
-                    <option value="DELETE">DELETE</option>
-                    <option value="PATCH">PATCH</option>
-                </select>
+            <div class="select-wrapper" id="method-select">
+
+                <button class="select-trigger" id="method-trigger">
+                    <span id="method-value">GET</span>
+                    <img class="arrow" src="/static/images/dropdown.png" alt="▾"/>
+                </button>
+
+                <div class="select-menu" id="method-menu">
+                    <div class="option">GET</div>
+                    <div class="option">POST</div>
+                    <div class="option">PUT</div>
+                    <div class="option">DELETE</div>
+                    <div class="option">PATCH</div>
+                </div>
+
             </div>
+
             <label for="request-url" class="visually-hidden">Request URL</label>
             <input id="request-url" type="text" placeholder="Enter URL to monitor traffic..." autofocus />
             <button id="send-request">Send</button>
@@ -94,6 +101,6 @@
     </div>
     <button class="save-btn" id="save-request">Save</button>
 </section>
-<script src="/static/js/transaction.js" defer></script>
+<script src="/static/js/newRequest.js" defer></script>
 </body>
 </html>

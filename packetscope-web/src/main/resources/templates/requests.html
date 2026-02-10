@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PacketScope - Probe</title>
+  <title>PacketScope - Requests</title>
   <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet" />
   <link href="/static/css/requests.css" rel="stylesheet" />
 </head>
@@ -17,32 +17,33 @@
         <p>PacketScope</p>
       </div>
       <div class="nav">
-        <a class="active" href="/templates/index.html">Monitor</a>
-        <a href="/templates/requests.html">Console</a>
+        <a href="/templates/index.html">Monitor</a>
+        <a class="active"  href="/templates/requests.html">Requests</a>
       </div>
     </div>
 
     <!-- Main Section -->
     <main class="main">
 
-      <div class="section-title">Probe</div>
+      <div class="section-title">Requests</div>
       <div class="grid">
-          <div class="tile active" role="button" onclick="load('transaction.html'), this">
-              <h3>Probe</h3>
-              <p>Sent requests</p>
+
+          <div class="tile" role="button" tabindex="0" onclick="load('/templates/new-request.html'), this">
+              <h3>New request</h3>
+              <p>Create new transaction</p>
           </div>
-          <div class="tile" role="button" onclick="load('history.html'), this">
-              <h3>Transactions</h3>
+
+          <div class="tile" role="button" tabindex="0" onclick="load('/templates/saved-requests.html'), this">
+              <h3>Saved requests</h3>
               <p>saved transaction history</p>
           </div>
       </div>
 
+        <div class="iframe-shell"><iframe id="view" src="/templates/new-request.html"></iframe></div>
 
-      <iframe id="view" src="/templates/new-requests.html" class="contents">
-
-      </iframe>
     </main>
   </div>
+
 <script src="/static/js/requests.js" defer></script>
 </body>
 

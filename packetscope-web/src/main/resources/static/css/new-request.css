@@ -4,19 +4,31 @@
   --grid: rgba(255, 255, 255, 0.04);
   --text: rgb(210, 210, 210);
   --accent: rgb(79, 127, 250);
+  --neon-blue: #1a73e8;
 }
 
-body{
-    font-family: "Michroma", sans-serif, system-ui, monospace;
-    display:flex;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Michroma', system-ui, monospace;
+}
+
+html, body {
+    height: 100%;
+    color: #e0e0e0;
+}
+
+body {
+    display: flex;
     flex-direction: column;
-    gap:30px;
-    }
+    gap: 24px;
+}
 
 h2 {
-  margin: 10px 0;
-  color: rgba(60, 70, 160, 1);
-  align-self: left;
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: white;
 }
 
 .visually-hidden {
@@ -32,14 +44,15 @@ h2 {
 }
 
 /* Request Panel */
+.response-panel,
 .request-panel {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 20px;
-  border-radius: 15px;
-/*  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7); */
+  background: rgb(14, 14, 14);
+  border: 1px solid #222;
+  border-radius: 10px;
+  padding: 18px;
 }
 
 /* Request Row (method + url + button) */
@@ -54,85 +67,119 @@ h2 {
 .search-box {
   display: flex;
   height: 50px;
-  width: 80%;
-  max-width: 700px;
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 50px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 5px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
-  justify-content: space-between;
-}
-
-.select-wrapper {
-  position: relative;
-  display: flex;
-  width: 120px;
-}
-
-.select-wrapper select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-
   width: 100%;
-  padding: 5px;
-  padding-left: 10px;
-  font-family: "Michroma", sans-serif;
-  font-size: 14px;
-  color: #fff;
-  background: none;
-  border: none;
-  border-right: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
-  outline: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  background: rgba(16,16,16);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0 5px;
+  margin-bottom: 20px;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* Custom arrow */
-.select-wrapper::after {
-  content: "▼";
-  font-size: 12px;
-  color: #666;
-  position: absolute;
-  right: 12px;
-  top: 15px;
-  pointer-events: none;
+/* select method */
+.select-wrapper{
+    position: relative;
+    background: transparent;
 }
 
-.select-wrapper select:hover {
-  border-color: #4285f4;
+.select-trigger {
+    padding: 5px;
+    width:120px;
+    background: none;
+    border: none;
+    border-right: 1px solid #333;
+    color: #ddd;
+    font-size: 11px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
 }
+
+.arrow {
+    height: 30px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    transition: transform .2s ease;
+}
+
+#method-value{
+    font-family:sans-serif, system-ui;
+    letter-spacing:1px;
+}
+/* Menu */
+.select-menu {
+    position: absolute;
+    top: 100%;
+    margin-top: 2px;
+    width:100px;
+    background: rgb(16,16,16);
+    border: 1px solid #222;
+    opacity: 0;
+    transform: translateY(-6px);
+    pointer-events: none;
+    transition: .15s ease;
+    z-index: 10;
+}
+
+/* Open state */
+
+.select-wrapper.open .select-menu {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.select-wrapper.open .arrow {
+    transform: rotate(180deg);
+}
+
+/* Options */
+
+.option {
+    font-family:sans-serif, system-ui;
+    letter-spacing:1px;
+    padding: 8px 10px;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.option:hover {
+    background: rgb(28,28,28);
+    color: #4ea1ff;
+}
+
 
 .search-box input {
   flex: 1;
-  font-family: "Michroma", sans-serif;
+  font-family: system-ui, sans-serif;
+  letter-spacing: 0.5px;
   border: none;
   outline: none;
   background: transparent;
   color: #fff;
-  font-size: 16px;
+  font-size: 14px;
   padding: 10px 20px;
 }
 
 /* search button */
-.search-box button {
-  width: 120px;
-  background-color: #1c1c1c;
-  color: white;
-  font-size: 16px;
-  border: 2px solid #1a73e8;
-  border-radius: 50px;
+#send-request {
+  padding: 5px;
+  width: 100px;
+  background-color:#1c1c1c;
   cursor: pointer;
-  font-family: "Michroma", sans-serif;
+  font-family: sans-serif, system-ui;
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  color: var(--text);
+  border: 2px solid #1a73e8;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   transition: all 0.3s ease;
+  border-radius: 10px;
 }
 
-.search-box button:hover {
+#send-request:hover {
   background-color: #2a2a2a;
   border-color: #4285f4;
 }
@@ -140,9 +187,9 @@ h2 {
 /* Request Section */
 .request-section h3 {
   margin: 15px 0 8px 0;
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 300;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .query-params {
@@ -164,22 +211,22 @@ h2 {
 }
 
 .parameter{
-  flex: 1;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  outline: none;
-  padding: 12px 12px;
-  border-radius: 8px;
-  color: #fff;
-  font-size: 14px;
+    flex: 1;
+    background: rgba(16,16,16);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    outline: none;
+    padding: 5px 12px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    font-family:sans-serif, system-ui;
+    letter-spacing:1px;
 }
 
 textarea#request-body {
   width: 98%;
   min-height: 120px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(16,16,16);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
   color: #fff;
   font-family: monospace;
   font-size: 14px;
@@ -191,13 +238,12 @@ textarea#request-body {
 #add-param,
 #add-header {
   background: #1c1c1c;
-  color: #fff;
+  color: rgba(255, 255 , 255, 0.7) ;
   font-family: "Michroma", sans-serif;
   font-size: 12px;
-  border: 1px solid #1a73e8;
-  border-radius: 8px;
+  border: 1px solid rgba(26,115,232, 0.5);
   cursor: pointer;
-  padding: 8px 12px;
+  padding: 12px 12px;
   transition: all 0.3s ease;
 }
 
@@ -206,9 +252,8 @@ textarea#request-body {
   height: 32px;
   width: 32px;
   background: #1c1c1c;
-  border: 1px solid #1a73e8;
-  border-radius: 8px;
-  color: #fff;
+  border: 1px solid rgba(255, 255 , 255, 0.2);
+  color: rgba(255, 0 , 0, 0.5);
   font-family: "Michroma", sans-serif;
   font-size: 12px;
   cursor: pointer;
@@ -216,25 +261,14 @@ textarea#request-body {
 }
 
 #add-param:hover,
-#add-header:hover,
+#add-header:hover {
+  border-color: #4285f4 ;
+}
 .remove-param:hover,
-.remove-header:hover {
-  background: #2a2a2a;
-  border-color: #4285f4;
+.remove-header:hover{
+    border-color: rgba(255, 0 , 0, 0.5);
 }
-
-/* Response Panel */
-
-.response-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 20px;
-  border-radius: 15px;
-/*  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7); */
-  margin-bottom: 120px;
-}
+/* ============ Response Panel ============== */
 
 .response-panel h4 {
   margin: 10px 0;
@@ -269,9 +303,8 @@ textarea#request-body {
 .tab-content {
   position: relative;
   min-height: 200px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(16,16,16);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
   padding: 12px;
   color: #2fff00;
   font-family: monospace;
@@ -307,7 +340,7 @@ textarea#request-body {
   color: white;
   font-size: 16px;
   border: 2px solid #1a73e8;
-  border-radius: 50px;
+  border-radius: 10px;
   cursor: pointer;
   font-family: "Michroma", sans-serif;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);

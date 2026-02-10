@@ -3,11 +3,10 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>PacketScope</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet" />
-
-  <link href="/static/css/index.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PacketScope - Monitor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet" />
+    <link href="/static/css/index.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -17,17 +16,18 @@
         <img src="/static/images/packetscopeLogo.jpeg" style="height: 50px; width: 50px" alt="logo" />
         <p>PacketScope</p>
       </div>
-
       <div class="nav">
         <a class="active" href="/templates/index.html">Monitor</a>
-        <a href="/templates/requests.html">Console</a>
+        <a href="/templates/requests.html">Requests</a>
       </div>
     </div>
 
-    <main class="main">
-      <div class="section-title">Monitor</div>
+      <!-- Main Section -->
+      <main class="main">
 
-      <div class="grid">
+        <div class="section-title">Monitor</div>
+        <div class="grid">
+
         <div class="tile active" role="button" tabindex="0" onclick="load('/templates/timeline.html', this)">
           <h3>Timeline</h3>
           <p>Protocol × direction over time</p>
@@ -48,10 +48,9 @@
           <p>Raw packet telemetry</p>
         </div>
       </div>
+
       <iframe id="view" src="/templates/timeline.html"></iframe>
-      <!--        <div class="footer">-->
-      <!--          Java 21 · Passive Capture + Active Control · Framework-Free-->
-      <!--        </div>-->
+
     </main>
   </div>
 

@@ -85,3 +85,130 @@ html, body {
 
 .request-item.active {
     background: rgb(24, 24, 24);
+    border-left: 3px solid #4ea1ff;
+}
+
+/* -------------------- */
+/* METHOD BADGES */
+/* -------------------- */
+.method {
+    min-width: 42px;
+    text-align: center;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.method.GET { background: #1f6feb; }
+.method.POST { background: #238636; }
+.method.PUT { background: #8250df; }
+.method.DELETE { background: #da3633; }
+.method.PATCH { background: #bf8700; }
+
+/* -------------------- */
+/* URL + TIME */
+/* -------------------- */
+.url {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #d0d0d0;
+}
+
+.time {
+    font-size: 9px;
+    color: #777;
+}
+
+/* -------------------- */
+/* RIGHT PANEL */
+/* -------------------- */
+.saved-detail {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: rgb(12, 12, 12);
+}
+
+/* -------------------- */
+/* DETAIL HEADER */
+/* -------------------- */
+.detail-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid #222;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.detail-header h2 {
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: #ffffff;
+}
+
+.actions button {
+    margin-left: 8px;
+    padding: 6px 12px;
+    background: rgb(20, 20, 20);
+    border: 1px solid #333;
+    color: #ddd;
+    font-size: 10px;
+    cursor: pointer;
+    transition: background 0.15s ease, border 0.15s ease;
+}
+
+.actions button:hover {
+    background: rgb(28, 28, 28);
+    border-color: #555;
+}
+
+/* -------------------- */
+/* DETAIL BLOCKS */
+/* -------------------- */
+.detail-block {
+    padding: 20px 24px;
+    border-bottom: 1px solid #1f1f1f;
+}
+
+.detail-block h3 {
+    font-size: 12px;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+    color: #aaa;
+}
+
+.detail-block pre {
+    background: rgb(16, 16, 16);
+    border: 1px solid #222;
+    padding: 14px;
+    font-size: 11px;
+    line-height: 1.5;
+    color: #e0e0e0;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* -------------------- */
+/* SCROLLBARS */
+/* -------------------- */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(12, 12, 12);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
