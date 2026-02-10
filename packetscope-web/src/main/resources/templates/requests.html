@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PacketScope - Probe</title>
   <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet" />
-  <link href="/static/css/probe.css" rel="stylesheet" />
+  <link href="/static/css/requests.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -18,7 +18,7 @@
       </div>
       <div class="nav">
         <a class="active" href="/templates/index.html">Monitor</a>
-        <a href="/templates/probe.html">Console</a>
+        <a href="/templates/requests.html">Console</a>
       </div>
     </div>
 
@@ -27,22 +27,23 @@
 
       <div class="section-title">Probe</div>
       <div class="grid">
-        <div class="tile active" role="button" onclick="load('transactions.html'), this">
-          <h3>Transactions</h3>
-          <p>saved transaction history</p>
-        </div>
-        <div class="tile" role="button" onclick="load('probe.html'), this">
-          <h3>Probe</h3>
-          <p>Sent requests</p>
-        </div>
+          <div class="tile active" role="button" onclick="load('transaction.html'), this">
+              <h3>Probe</h3>
+              <p>Sent requests</p>
+          </div>
+          <div class="tile" role="button" onclick="load('history.html'), this">
+              <h3>Transactions</h3>
+              <p>saved transaction history</p>
+          </div>
       </div>
 
 
-      <iframe id="view" src="/templates/transaction.html" class="contents">
+      <iframe id="view" src="/templates/new-requests.html" class="contents">
 
       </iframe>
     </main>
   </div>
+<script src="/static/js/requests.js" defer></script>
 </body>
 
 </html>

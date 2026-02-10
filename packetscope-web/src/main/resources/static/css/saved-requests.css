@@ -1,0 +1,87 @@
+/* -------------------- */
+/* GLOBAL RESET */
+/* -------------------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: 'Michroma', system-ui, sans-serif;
+    background-color: rgb(12, 12, 12);
+    color: #e6e6e6;
+}
+
+/* -------------------- */
+/* MAIN LAYOUT */
+/* -------------------- */
+.saved-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+/* -------------------- */
+/* LEFT PANEL */
+/* -------------------- */
+.saved-list {
+    width: 340px;
+    border-right: 1px solid #222;
+    display: flex;
+    flex-direction: column;
+    background: rgb(14, 14, 14);
+}
+
+.list-header {
+    padding: 18px;
+    border-bottom: 1px solid #222;
+}
+
+.list-header h2 {
+    font-size: 14px;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+#search {
+    width: 100%;
+    padding: 8px 10px;
+    background: rgb(18, 18, 18);
+    border: 1px solid #333;
+    color: #ddd;
+    font-size: 11px;
+    outline: none;
+}
+
+#search::placeholder {
+    color: #777;
+}
+
+/* -------------------- */
+/* REQUEST LIST */
+/* -------------------- */
+#requests {
+    list-style: none;
+    overflow-y: auto;
+}
+
+.request-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #1f1f1f;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    transition: background 0.15s ease;
+}
+
+.request-item:hover {
+    background: rgb(20, 20, 20);
+}
+
+.request-item.active {
+    background: rgb(24, 24, 24);
