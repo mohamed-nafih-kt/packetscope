@@ -2,6 +2,22 @@
 const wrapper = document.getElementById("method-select");
 const trigger = document.getElementById("method-trigger");
 const value = document.getElementById("method-value");
+const notificationBar = document.getElementById("notification");
+let notificationTimer;
+
+// show notification
+function showNotification(msg, type = 'info') {
+  clearTimeout(notificationTimer);
+
+  notificationBar.innerHTML = `<p>${msg}</p>`;
+
+  notificationBar.classList.remove('error', 'success', 'info', 'hidden');
+  notificationBar.classList.add(type);
+
+  notificationTimer = setTimeout(() => {
+    notificationBar.classList.add("hidden");
+  }, 3000);
+}
 
 trigger.addEventListener("click", () => {
     wrapper.classList.toggle("open");
@@ -15,13 +31,11 @@ wrapper.querySelectorAll(".option").forEach(opt => {
 });
 
 /* close when clicking outside */
-
 document.addEventListener("click", e => {
     if (!wrapper.contains(e.target)) {
         wrapper.classList.remove("open");
     }
 });
-
 
 // Tab switching
 document.querySelectorAll(".response-tabs .tab").forEach((tab) => {
@@ -36,6 +50,7 @@ document.querySelectorAll(".response-tabs .tab").forEach((tab) => {
   });
 });
 
+/* ====================== DOM Content Loader ====================== */
 document.addEventListener("DOMContentLoaded", () => {
   const sendBtn = document.getElementById("send-request");
   const addParamBtn = document.getElementById("add-param");
@@ -44,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Helper: build Request DTO
   function buildRequestDto() {
-    const method = document.getElementById("http-method").value;
+    const method = document.getElementById("http-method").textContent;
     let url = document.getElementById("request-url").value.trim();
     const body = document.getElementById("request-body").value;
 
@@ -72,13 +87,15 @@ document.addEventListener("DOMContentLoaded", () => {
     return { method, url, headers, body };
   }
 
-  // Dynamic query param rows
+
+  /* ======================   Dynamic Parameters Add/Remove ====================== */
+  // Dynamic add parameters rows
   addParamBtn.addEventListener("click", () => {
     const div = document.createElement("div");
     div.className = "param-row";
     div.innerHTML = `
-      <input type="text" placeholder="Key" />
-      <input type="text" placeholder="Value" />
+      <input class="parameter" type="text" placeholder="Key" />
+      <input  class="parameter" type="text" placeholder="Value" />
       <button class="remove-param">X</button>
     `;
     document.getElementById("query-params").insertBefore(div, addParamBtn);
@@ -87,13 +104,13 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   });
 
-  // Dynamic header rows
+  // Dynamic add header rows
   addHeaderBtn.addEventListener("click", () => {
     const div = document.createElement("div");
     div.className = "header-row";
     div.innerHTML = `
-      <input type="text" placeholder="Header Name" />
-      <input type="text" placeholder="Header Value" />
+      <input class="parameter" type="text" placeholder="Header Name" />
+      <input class="parameter" type="text" placeholder="Header Value" />
       <button class="remove-header">X</button>
     `;
     document.getElementById("headers").insertBefore(div, addHeaderBtn);
@@ -110,9 +127,19 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", (e) => e.target.parentElement.remove());
   });
 
-  // Send request (preview only)
+  /* ======================   Send Request ====================== */
+
   sendBtn.addEventListener("click", async () => {
+    try{
     const requestDto = buildRequestDto();
+    }catch(e){
+        showNotification("error: "+e.message, 'error');
+    }
+
+    if (!requestDto.url) {
+            showNotification("Please enter a URL", "error");
+            return;
+        }
 
     try {
       const response = await fetch("/api/transactions/execute", {
@@ -145,7 +172,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Save Button (explicit persistence)
+  /* ====================== Save Button (explicit persistence) ====================== */
+
   saveBtn.addEventListener("click", async () => {
     if (!window.lastTransactionRequest) {
       alert("Please run the request first before saving!");

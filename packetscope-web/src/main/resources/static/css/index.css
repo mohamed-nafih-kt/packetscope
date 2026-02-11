@@ -106,7 +106,7 @@ body {
 .tile:hover {
   cursor: pointer;
   transform: translateY(-3px);
-  box-shadow: 0 0 20px rgba(79, 127, 250, 0.75);
+  box-shadow: 0 0 10px rgba(79, 127, 250, 0.75);
 }
 
 .tile h3 {

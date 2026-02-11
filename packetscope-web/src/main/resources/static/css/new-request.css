@@ -31,6 +31,60 @@ h2 {
     color: white;
 }
 
+/* Base styles for the bar */
+.hidden{
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateX(-50%) translateY(-20px) !important;
+    pointer-events: none;
+}
+
+#notification {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  visibility: visible;
+  transition:
+      transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28),
+      opacity 0.3s ease;
+  width: fit-content;
+  max-width: 90%;
+
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 5px 10px;
+  border-radius: 8px;
+  z-index: 10000;
+  transition: all 0.3s ease;
+}
+
+#notification p {
+  margin: 0;
+  font-size: 11px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Type variations */
+#notification.info {
+  color: rgba(79, 127, 250, 0.9);
+}
+
+#notification.error {
+  border-color: #ff3c3c;
+  color: rgba(255, 60, 60, 0.9);
+}
+
+#notification.success {
+  color: rgba(0, 200, 100, 0.9); /* Green */
+  border-color: #00c864;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -223,7 +277,7 @@ h2 {
 }
 
 textarea#request-body {
-  width: 98%;
+  width: 100%;
   min-height: 120px;
   background: rgba(16,16,16);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -239,8 +293,6 @@ textarea#request-body {
 #add-header {
   background: #1c1c1c;
   color: rgba(255, 255 , 255, 0.7) ;
-  font-family: "Michroma", sans-serif;
-  font-size: 12px;
   border: 1px solid rgba(26,115,232, 0.5);
   cursor: pointer;
   padding: 12px 12px;
@@ -285,7 +337,6 @@ textarea#request-body {
   background: none;
   border: none;
   color: #1a73e8;
-  font-family: "Michroma", sans-serif;
   font-size: 14px;
   padding: 10px 15px;
   cursor: pointer;
@@ -305,9 +356,7 @@ textarea#request-body {
   min-height: 200px;
   background: rgba(16,16,16);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 12px;
-  color: #2fff00;
-  font-family: monospace;
+  color: rgba(255, 255, 255, 0.7);
   white-space: pre-wrap;
   overflow: hidden;
   overflow-y: scroll;
@@ -317,7 +366,6 @@ textarea#request-body {
 /* Individual Tab Pane */
 .tab-pane {
   position: absolute;
-  /* stack all panes in same space */
   top: 0;
   left: 0;
   right: 0;
@@ -326,6 +374,11 @@ textarea#request-body {
   pointer-events: none;
 }
 
+.tab-pane pre{
+  font-size: 12px;
+  font-family: sans-serif, system-ui;
+  letter-spacing: 1px;
+}
 /* Active Tab Pane */
 .tab-pane.active {
   opacity: 1;
@@ -342,7 +395,6 @@ textarea#request-body {
   border: 2px solid #1a73e8;
   border-radius: 10px;
   cursor: pointer;
-  font-family: "Michroma", sans-serif;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   transition: all 0.3s ease;
 }
