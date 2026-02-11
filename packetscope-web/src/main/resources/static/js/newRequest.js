@@ -1,16 +1,30 @@
-// Dropdown request method
+/* ============================================================
+   1. GLOBAL SELECTORS & STATE
+   ============================================================ */
 const wrapper = document.getElementById("method-select");
 const trigger = document.getElementById("method-trigger");
 const value = document.getElementById("method-value");
 const notificationBar = document.getElementById("notification");
 let notificationTimer;
 
-// show notification
+// Global state to store the most recent successful request/response
+window.lastTransactionRequest = null;
+window.lastTransactionResponse = null;
+
+
+/* ============================================================
+   2. UI HELPER FUNCTIONS
+   ============================================================ */
+
+/**
+ * Displays a temporary notification bar at the top of the screen
+ * @param {string} msg - The message to display
+ * @param {string} type - 'error' | 'success' | 'info'
+ */
 function showNotification(msg, type = 'info') {
   clearTimeout(notificationTimer);
 
   notificationBar.innerHTML = `<p>${msg}</p>`;
-
   notificationBar.classList.remove('error', 'success', 'info', 'hidden');
   notificationBar.classList.add(type);
 
@@ -19,92 +33,103 @@ function showNotification(msg, type = 'info') {
   }, 3000);
 }
 
-trigger.addEventListener("click", () => {
-    wrapper.classList.toggle("open");
-});
+/**
+ * Extracts data from the UI to create a Request DTO
+ * @returns {Object} { method, url, headers, body }
+ */
+function buildRequestDto() {
+  const method = document.getElementById("method-value").textContent;
+  let url = document.getElementById("request-url").value.trim();
+  const body = document.getElementById("request-body").value;
 
-wrapper.querySelectorAll(".option").forEach(opt => {
-    opt.addEventListener("click", () => {
-        value.textContent = opt.textContent;
-        wrapper.classList.remove("open");
-    });
-});
-
-/* close when clicking outside */
-document.addEventListener("click", e => {
-    if (!wrapper.contains(e.target)) {
-        wrapper.classList.remove("open");
-    }
-});
-
-// Tab switching
-document.querySelectorAll(".response-tabs .tab").forEach((tab) => {
-  tab.addEventListener("click", () => {
-    document.querySelectorAll(".response-tabs .tab")
-      .forEach((t) => t.classList.remove("active"));
-    document.querySelectorAll(".tab-pane")
-      .forEach((p) => p.classList.remove("active"));
-
-    tab.classList.add("active");
-    document.getElementById(tab.dataset.target).classList.add("active");
+  // 1. Collect query params from dynamic rows
+  const paramRows = document.querySelectorAll("#query-params .param-row");
+  const params = new URLSearchParams();
+  paramRows.forEach((row) => {
+    const key = row.querySelector("input[placeholder='Key']").value;
+    const val = row.querySelector("input[placeholder='Value']").value;
+    if (key) params.append(key, val);
   });
-});
 
-/* ====================== DOM Content Loader ====================== */
+  // Append params to URL if they exist
+  if ([...params].length > 0) {
+    url += (url.includes("?") ? "&" : "?") + params.toString();
+  }
+
+  // 2. Collect headers from dynamic rows
+  const headerRows = document.querySelectorAll("#headers .header-row");
+  const headers = {};
+  headerRows.forEach((row) => {
+    const key = row.querySelector("input[placeholder='Header Name']").value;
+    const val = row.querySelector("input[placeholder='Header Value']").value;
+    if (key) headers[key] = val;
+  });
+
+  return { method, url, headers, body };
+}
+
+
+/* ============================================================
+   3. EVENT LISTENERS & INITIALIZATION
+   ============================================================ */
+
 document.addEventListener("DOMContentLoaded", () => {
+
+  // Element References
   const sendBtn = document.getElementById("send-request");
   const addParamBtn = document.getElementById("add-param");
   const addHeaderBtn = document.getElementById("add-header");
   const saveBtn = document.getElementById("save-request");
 
-  // Helper: build Request DTO
-  function buildRequestDto() {
-    const method = document.getElementById("http-method").textContent;
-    let url = document.getElementById("request-url").value.trim();
-    const body = document.getElementById("request-body").value;
+  /* --- Dropdown Logic --- */
+  trigger.addEventListener("click", () => {
+    wrapper.classList.toggle("open");
+  });
 
-    // Collect query params
-    const paramRows = document.querySelectorAll("#query-params .param-row");
-    const params = new URLSearchParams();
-    paramRows.forEach((row) => {
-      const key = row.querySelector("input[placeholder='Key']").value;
-      const value = row.querySelector("input[placeholder='Value']").value;
-      if (key) params.append(key, value);
+  wrapper.querySelectorAll(".option").forEach(opt => {
+    opt.addEventListener("click", () => {
+      value.textContent = opt.textContent;
+      wrapper.classList.remove("open");
     });
-    if ([...params].length > 0) {
-      url += (url.includes("?") ? "&" : "?") + params.toString();
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!wrapper.contains(e.target)) {
+      wrapper.classList.remove("open");
     }
+  });
 
-    // Collect headers
-    const headerRows = document.querySelectorAll("#headers .header-row");
-    const headers = {};
-    headerRows.forEach((row) => {
-      const key = row.querySelector("input[placeholder='Header Name']").value;
-      const value = row.querySelector("input[placeholder='Header Value']").value;
-      if (key) headers[key] = value;
+  /* --- Tab Switching Logic --- */
+  document.querySelectorAll(".response-tabs .tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      // Clear active states
+      document.querySelectorAll(".response-tabs .tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+
+      // Set current active
+      tab.classList.add("active");
+      const targetPane = document.getElementById(tab.dataset.target);
+      if (targetPane) targetPane.classList.add("active");
     });
+  });
 
-    return { method, url, headers, body };
-  }
+  /* --- Dynamic Row Management (Params & Headers) --- */
 
-
-  /* ======================   Dynamic Parameters Add/Remove ====================== */
-  // Dynamic add parameters rows
+  // Add Query Param Row
   addParamBtn.addEventListener("click", () => {
     const div = document.createElement("div");
     div.className = "param-row";
     div.innerHTML = `
       <input class="parameter" type="text" placeholder="Key" />
-      <input  class="parameter" type="text" placeholder="Value" />
+      <input class="parameter" type="text" placeholder="Value" />
       <button class="remove-param">X</button>
     `;
     document.getElementById("query-params").insertBefore(div, addParamBtn);
-    div.querySelector(".remove-param").addEventListener("click", () =>
-      div.remove()
-    );
+    div.querySelector(".remove-param").addEventListener("click", () => div.remove());
   });
 
-  // Dynamic add header rows
+  // Add Header Row
   addHeaderBtn.addEventListener("click", () => {
     const div = document.createElement("div");
     div.className = "header-row";
@@ -114,32 +139,29 @@ document.addEventListener("DOMContentLoaded", () => {
       <button class="remove-header">X</button>
     `;
     document.getElementById("headers").insertBefore(div, addHeaderBtn);
-    div.querySelector(".remove-header").addEventListener("click", () =>
-      div.remove()
-    );
+    div.querySelector(".remove-header").addEventListener("click", () => div.remove());
   });
 
-  // Initial remove buttons
-  document.querySelectorAll(".remove-param").forEach((btn) => {
-    btn.addEventListener("click", (e) => e.target.parentElement.remove());
-  });
-  document.querySelectorAll(".remove-header").forEach((btn) => {
+  // Delegate initial removal buttons
+  document.querySelectorAll(".remove-param, .remove-header").forEach((btn) => {
     btn.addEventListener("click", (e) => e.target.parentElement.remove());
   });
 
-  /* ======================   Send Request ====================== */
 
+  /* ============================================================
+     4. API EXECUTION & PERSISTENCE
+     ============================================================ */
+
+  /**
+   * SEND REQUEST: Executes the API call via the proxy/transaction endpoint
+   */
   sendBtn.addEventListener("click", async () => {
-    try{
     const requestDto = buildRequestDto();
-    }catch(e){
-        showNotification("error: "+e.message, 'error');
-    }
 
     if (!requestDto.url) {
-            showNotification("Please enter a URL", "error");
-            return;
-        }
+      showNotification("Please enter a URL", "error");
+      return;
+    }
 
     try {
       const response = await fetch("/api/transactions/execute", {
@@ -148,32 +170,35 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify(requestDto),
       });
 
-      if (!response.ok) throw new Error("Server error: " + response.status);
+      if (!response.ok){
+            const errorMsg = `Server returned ${response.status}: ${response.statusText}`;
+            showNotification(errorMsg, "error");
+            return;
+       }
 
       const data = await response.json();
+      showNotification("Request sent", "success");
 
-      // Save preview result globally so we can "Save" later
+      // Cache for the Save button logic
       window.lastTransactionRequest = requestDto;
       window.lastTransactionResponse = data;
 
-      // Update UI
-      document.getElementById("result-status").textContent =
-        "Status: " + data.status;
-      document.getElementById("result-body").textContent =
-        data.body || "(empty)";
-      document.getElementById("result-headers").textContent =
-        JSON.stringify(data.headers || {}, null, 2);
-      document.getElementById("result-cookies").textContent =
-        JSON.stringify(data.cookies || {}, null, 2);
-    } catch (err) {
-      console.error(err);
-      document.getElementById("result-status").textContent =
-        "Error: " + err.message;
+      // Update Result UI
+      document.getElementById("result-status").textContent = `Status: ${data.status}`;
+      document.getElementById("result-body").textContent = data.body || "(empty)";
+      document.getElementById("result-headers").textContent = JSON.stringify(data.headers || {}, null, 2);
+      document.getElementById("result-cookies").textContent = JSON.stringify(data.cookies || {}, null, 2);
+
+    } catch (error) {
+      console.error("Request failed:", error);
+      showNotification(error.message, "error");
+      document.getElementById("result-status").textContent = `Error: ${error.message}`;
     }
   });
 
-  /* ====================== Save Button (explicit persistence) ====================== */
-
+  /**
+   * SAVE REQUEST: Persists the last executed request to the database
+   */
   saveBtn.addEventListener("click", async () => {
     if (!window.lastTransactionRequest) {
       alert("Please run the request first before saving!");
@@ -189,10 +214,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!response.ok) throw new Error("Save failed: " + response.status);
 
-      const data = await response.text();
-      alert(data); // "Transaction saved successfully!"
+      const message = await response.text();
+      showNotification("Transaction saved to database", "success");
     } catch (err) {
       alert("Error saving transaction: " + err.message);
     }
   });
+
 });
