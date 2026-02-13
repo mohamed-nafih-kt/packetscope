@@ -1,5 +1,7 @@
 package com.packetscope.db;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.packetscope.model.PacketReadModel;
 import com.packetscope.packetread.PacketRowMapper;
 
@@ -187,17 +189,80 @@ public final class PacketQueryDao {
     // -------------------------------------------------
     // Transactions
     // -------------------------------------------------
-    public void saveTransaction(RequestDto dto) throws SQLException {
-        String sql = "INSERT INTO transaction_logs (url, method, body, created_at) VALUES (?, ?, ?, NOW())";
+    public void saveTransaction(
+            String method,
+            String url,
+            Map<String,String> reqHeaders,
+            String reqBody,
+            int status,
+            Map<String,List<String>> resHeaders,
+            String resBody
+    ) throws SQLException {
+        String sql = """
+        INSERT INTO transaction_logs
+        (method, url, request_headers, request_body,
+         response_status, response_headers, response_body)
+         VALUES (?, ?, ?, ?, ?, ?, ?)
+        """;
+
+        ObjectMapper mapper = new ObjectMapper();
 
         try (Connection conn = db.get();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, dto.url);
-            pstmt.setString(2, dto.method);
-            pstmt.setString(3, dto.body);
+            ps.setString(1, method);
+            ps.setString(2, url);
+            ps.setString(3, mapper.writeValueAsString(reqHeaders));
+            ps.setString(4, reqBody);
+            ps.setInt(5, status);
+            ps.setString(6, mapper.writeValueAsString(resHeaders));
+            ps.setString(7, resBody);
 
-            pstmt.executeUpdate();
+            ps.executeUpdate();
+        } catch (JsonProcessingException e) {
+            System.out.println("Failed to save: " + e.getMessage());
         }
     }
+
+    // saved transactions
+    public List<RequestDto> findAll() throws SQLException, JsonProcessingException {
+
+        String sql = """
+        SELECT id, method, url, request_headers, request_body, created_at
+        FROM transaction_logs
+        ORDER BY created_at DESC
+    """;
+
+        List<RequestDto> list = new ArrayList<>();
+
+        try (Connection conn = db.get();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            ObjectMapper mapper = new ObjectMapper();
+
+            while (rs.next()) {
+
+                RequestDto dto = new RequestDto();
+
+                dto.id = rs.getLong("id");
+                dto.method = rs.getString("method");
+                dto.url = rs.getString("url");
+
+                String headers = rs.getString("request_headers");
+                dto.headers = headers == null ? Map.of() :
+                        mapper.readValue(headers, Map.class);
+
+                dto.body = rs.getString("request_body");
+                dto.created_at = rs.getTimestamp("created_at").toString();
+
+                list.add(dto);
+            }
+        }catch (Exception e){
+            System.out.println("Failed to find transactions: " + e.getMessage());
+        }
+
+        return list;
+    }
+
 }

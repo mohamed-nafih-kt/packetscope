@@ -23,6 +23,7 @@ public class SocketHandler  implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+
         // Handle CORS Pre-flight
         exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
         exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
@@ -38,8 +39,8 @@ public class SocketHandler  implements HttpHandler {
 
         try{
             switch(fullPath){
-                case "/api/transactions/execute" -> handleExecute(body, exchange);
-                case "/api/transactions/save" -> handleSave(body, exchange, dao);
+                case "/api/transactions/execute" -> handleExecute(body, exchange, dao);
+                case "/api/transactions/history" -> handleSavedRequests(exchange, dao);
                 default -> {
                     exchange.sendResponseHeaders(404, -1);
                 }
@@ -51,7 +52,7 @@ public class SocketHandler  implements HttpHandler {
             }
     }
 
-    public static void handleExecute(String body,  HttpExchange exchange) throws Exception {
+    public static void handleExecute(String body,  HttpExchange exchange, PacketQueryDao dao) throws Exception {
 
         // Initialize the Jackson JSON engine to handle data transformation.
         ObjectMapper mapper = new ObjectMapper();
@@ -81,6 +82,17 @@ public class SocketHandler  implements HttpHandler {
             HttpResponse<String> upstream =
                     client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
 
+            dao.saveTransaction(
+                    dto.method,
+                    dto.url,
+                    dto.headers,
+                    dto.body,
+                    upstream.statusCode(),
+                    upstream.headers().map(),
+                    upstream.body()
+            );
+
+
             var result = new java.util.HashMap<String, Object>();
 
             result.put("status", upstream.statusCode());
@@ -98,27 +110,34 @@ public class SocketHandler  implements HttpHandler {
             try (OutputStream out = exchange.getResponseBody()) {
                 out.write(bytes);
             }
-
+        }catch (Exception e) {
+            System.out.println("Error handling request: " + e.getMessage());
+            String payload = "{\"error\":\"" + e.getClass().getSimpleName() + "\"}";
+            byte[] bytes = payload.getBytes();
+            exchange.sendResponseHeaders(502, bytes.length);
+            exchange.getResponseBody().write(bytes);
         }
     }
 
     // Inside com.packetscope.http.SocketHandler
-    public static void handleSave(String body,  HttpExchange exchange, PacketQueryDao dao) throws Exception {
+
+    public static void handleSavedRequests(HttpExchange exchange, PacketQueryDao dao) throws Exception {
 
         ObjectMapper mapper = new ObjectMapper();
-        RequestDto dto = mapper.readValue(body, RequestDto.class);
 
-        // Persist to MySQL
-        dao.saveTransaction(dto);
+        List<RequestDto> list = dao.findAll();
 
-        // Send a "Success" response back to the frontend
-        String payload = "{\"status\": \"saved\", \"url\": \"" + dto.url + "\"}";
+        String payload = mapper.writeValueAsString(list);
+        byte[] bytes = payload.getBytes();
 
-        exchange.sendResponseHeaders(200, payload.length());
+        exchange.getResponseHeaders().set("Content-Type", "application/json");
+        exchange.sendResponseHeaders(200, bytes.length);
+
         try (OutputStream out = exchange.getResponseBody()) {
-            out.write(payload.getBytes());
+            out.write(bytes);
         }
     }
+
 }
 
 /* TEST
