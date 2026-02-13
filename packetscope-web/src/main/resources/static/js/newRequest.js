@@ -18,8 +18,6 @@ window.lastTransactionResponse = null;
 
 /**
  * Displays a temporary notification bar at the top of the screen
- * @param {string} msg - The message to display
- * @param {string} type - 'error' | 'success' | 'info'
  */
 function showNotification(msg, type = 'info') {
   clearTimeout(notificationTimer);
@@ -170,6 +168,8 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify(requestDto),
       });
 
+      showNotification("Request sent", "info");
+
       if (!response.ok){
             const errorMsg = `Server returned ${response.status}: ${response.statusText}`;
             showNotification(errorMsg, "error");
@@ -217,7 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const message = await response.text();
       showNotification("Transaction saved to database", "success");
     } catch (err) {
-      alert("Error saving transaction: " + err.message);
+      showNotification(err.message, "error");
     }
   });
 

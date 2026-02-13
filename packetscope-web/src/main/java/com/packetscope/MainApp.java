@@ -7,6 +7,7 @@ import com.packetscope.db.Db;
 import com.sun.net.httpserver.HttpServer;
 import java.net.InetSocketAddress;
 import java.sql.Connection;
+import java.util.concurrent.Executors;
 
 public final class MainApp{
 
@@ -29,9 +30,11 @@ public final class MainApp{
         server.createContext("/flows", new FlowsHandler(dao));
         server.createContext("/talkers", new TalkersHandler(dao));
         server.createContext("/packets", new PacketsHandler(dao));
+        server.createContext("/api/transactions", new SocketHandler(dao));
+
 //
 //        Static files (index.html, flows.html)
-//        server.setExecutor(Executors.newFixedThreadPool(8));
+        server.setExecutor(Executors.newFixedThreadPool(8));
         server.start();
     }
 }

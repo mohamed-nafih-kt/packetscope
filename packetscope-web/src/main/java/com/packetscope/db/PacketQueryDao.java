@@ -184,4 +184,20 @@ public final class PacketQueryDao {
         }
     }
 
+    // -------------------------------------------------
+    // Transactions
+    // -------------------------------------------------
+    public void saveTransaction(RequestDto dto) throws SQLException {
+        String sql = "INSERT INTO transaction_logs (url, method, body, created_at) VALUES (?, ?, ?, NOW())";
+
+        try (Connection conn = db.get();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, dto.url);
+            pstmt.setString(2, dto.method);
+            pstmt.setString(3, dto.body);
+
+            pstmt.executeUpdate();
+        }
+    }
 }

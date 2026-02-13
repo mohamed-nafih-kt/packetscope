@@ -72,17 +72,18 @@ h2 {
 
 /* Type variations */
 #notification.info {
-  color: rgba(79, 127, 250, 0.9);
+  background: white;
+  color: rgba(79, 127, 250, 0.6);
 }
 
 #notification.error {
-  border-color: #ff3c3c;
-  color: rgba(255, 60, 60, 0.9);
+  background:  rgba(255, 60, 60, 0.9);
+  color: white;
 }
 
 #notification.success {
-  color: rgba(0, 200, 100, 0.9); /* Green */
-  border-color: #00c864;
+  background : rgba(0, 200, 100, 0.9); /* Green */
+  color: white;
 }
 
 .visually-hidden {
