@@ -6,5 +6,7 @@ function load(page, btn) {
     .querySelectorAll(".tile")
     .forEach((b) => b.classList.remove("active"));
 
-  btn.classList.add("active");
+  if (btn) {
+    btn.classList.add("active");
+  }
 }

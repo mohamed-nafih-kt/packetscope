@@ -115,11 +115,11 @@ function addEmptyHeaderRow() {
 }
 
 /* ============================================================
-   3. EVENT LISTENERS & INITIALIZATION
+   EVENT LISTENERS & INITIALIZATION
    ============================================================ */
 
 document.addEventListener("DOMContentLoaded", () => {
-/* --- REPLAY HYDRATION --- */
+    /* --- REPLAY HYDRATION --- */
 
     const replay = sessionStorage.getItem("replayRequest");
 
@@ -219,7 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* ============================================================
-     4. API EXECUTION & PERSISTENCE
+     API EXECUTION & PERSISTENCE
      ============================================================ */
 
   /**

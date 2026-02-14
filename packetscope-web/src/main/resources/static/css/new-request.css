@@ -72,7 +72,7 @@ h2 {
 
 /* Type variations */
 #notification.info {
-  background: white;
+  background: rgba(255, 255, 255, 0.5);
   color: rgba(79, 127, 250, 0.6);
 }
 
