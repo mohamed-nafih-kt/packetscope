@@ -66,18 +66,90 @@ function buildRequestDto() {
   return { method, url, headers, body };
 }
 
+function populateHeaders(headers) {
+
+  const container = document.getElementById("headers");
+  const addBtn = document.getElementById("add-header");
+
+  // Clear existing rows
+  container.querySelectorAll(".header-row").forEach(r => r.remove());
+
+  if (!headers || Object.keys(headers).length === 0) {
+    addEmptyHeaderRow();
+    return;
+  }
+
+  Object.entries(headers).forEach(([key, value]) => {
+
+    const div = document.createElement("div");
+    div.className = "header-row";
+
+    div.innerHTML = `
+      <input class="parameter" type="text" placeholder="Header Name" value="${key}">
+      <input class="parameter" type="text" placeholder="Header Value" value="${value}">
+      <button class="remove-header">X</button>
+    `;
+
+    div.querySelector(".remove-header").addEventListener("click", () => div.remove());
+
+    container.insertBefore(div, addBtn);
+  });
+}
+
+function addEmptyHeaderRow() {
+  const container = document.getElementById("headers");
+  const addBtn = document.getElementById("add-header");
+
+  const div = document.createElement("div");
+  div.className = "header-row";
+
+  div.innerHTML = `
+    <input class="parameter" type="text" placeholder="Header Name">
+    <input class="parameter" type="text" placeholder="Header Value">
+    <button class="remove-header">X</button>
+  `;
+
+  div.querySelector(".remove-header").addEventListener("click", () => div.remove());
+
+  container.insertBefore(div, addBtn);
+}
 
 /* ============================================================
    3. EVENT LISTENERS & INITIALIZATION
    ============================================================ */
 
 document.addEventListener("DOMContentLoaded", () => {
+/* --- REPLAY HYDRATION --- */
+
+    const replay = sessionStorage.getItem("replayRequest");
+
+    if (replay) {
+      const req = JSON.parse(replay);
+
+      // Method
+      document.getElementById("method-value").textContent = req.method || "GET";
+
+      // URL
+      document.getElementById("request-url").value = req.url || "";
+
+      // Body
+      document.getElementById("request-body").value = req.request_body || req.body || "";
+
+      // Headers
+      populateHeaders(req.request_headers || req.headers);
+
+      // Optional: visual feedback
+      showNotification("Replayed request loaded", "info");
+
+      // Important: prevent stale replays
+      sessionStorage.removeItem("replayRequest");
+    }
+
 
   // Element References
   const sendBtn = document.getElementById("send-request");
   const addParamBtn = document.getElementById("add-param");
   const addHeaderBtn = document.getElementById("add-header");
-  const saveBtn = document.getElementById("save-request");
 
   /* --- Dropdown Logic --- */
   trigger.addEventListener("click", () => {
@@ -195,30 +267,4 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("result-status").textContent = `Error: ${error.message}`;
     }
   });
-
-  /**
-   * SAVE REQUEST: Persists the last executed request to the database
-   */
-  saveBtn.addEventListener("click", async () => {
-    if (!window.lastTransactionRequest) {
-      alert("Please run the request first before saving!");
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/transactions/save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(window.lastTransactionRequest),
-      });
-
-      if (!response.ok) throw new Error("Save failed: " + response.status);
-
-      const message = await response.text();
-      showNotification("Transaction saved to database", "success");
-    } catch (err) {
-      showNotification(err.message, "error");
-    }
-  });
-
 });

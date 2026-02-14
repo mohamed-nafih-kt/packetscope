@@ -111,13 +111,12 @@ replayBtn.addEventListener("click", async () => {
 
     if (!selected) return alert("Select a request first");
 
-    await fetch("/api/transactions/replay", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(selected)
-    });
+    // Store transaction temporarily
+    sessionStorage.setItem("replayRequest", JSON.stringify(selected));
 
-    alert("Request replayed");
+    // Navigate to New Request tab/page
+    window.parent.load("new-request.html");
+
 });
 
 /* ============================================================
