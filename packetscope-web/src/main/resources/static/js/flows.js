@@ -1,5 +1,5 @@
 async function refresh() {
-    const res = await fetch('/flows/active');
+    const res = await fetch('/flows');
     const data = await res.json();
 
     const tbody = document.querySelector('#flows tbody');
