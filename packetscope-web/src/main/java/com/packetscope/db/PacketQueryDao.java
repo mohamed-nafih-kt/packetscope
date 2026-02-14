@@ -225,44 +225,49 @@ public final class PacketQueryDao {
     }
 
     // saved transactions
-    public List<RequestDto> findAll() throws SQLException, JsonProcessingException {
+    public List<TransactionDto> findAllTransactions() throws SQLException, JsonProcessingException {
 
         String sql = """
-        SELECT id, method, url, request_headers, request_body, created_at
+        SELECT *
         FROM transaction_logs
         ORDER BY created_at DESC
     """;
 
-        List<RequestDto> list = new ArrayList<>();
+        List<TransactionDto> list = new ArrayList<>();
+        ObjectMapper mapper = new ObjectMapper();
 
         try (Connection conn = db.get();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
-            ObjectMapper mapper = new ObjectMapper();
-
             while (rs.next()) {
 
-                RequestDto dto = new RequestDto();
+                TransactionDto t = new TransactionDto();
 
-                dto.id = rs.getLong("id");
-                dto.method = rs.getString("method");
-                dto.url = rs.getString("url");
+                t.id = rs.getLong("id");
+                t.method = rs.getString("method");
+                t.url = rs.getString("url");
 
-                String headers = rs.getString("request_headers");
-                dto.headers = headers == null ? Map.of() :
-                        mapper.readValue(headers, Map.class);
+                t.request_headers = mapper.readValue(
+                        rs.getString("request_headers"), Map.class);
 
-                dto.body = rs.getString("request_body");
-                dto.created_at = rs.getTimestamp("created_at").toString();
+                t.request_body = rs.getString("request_body");
 
-                list.add(dto);
+                t.response_status = rs.getInt("response_status");
+
+                t.response_headers = mapper.readValue(
+                        rs.getString("response_headers"), Map.class);
+
+                t.response_body = rs.getString("response_body");
+
+                t.created_at = rs.getTimestamp("created_at").toString();
+
+                list.add(t);
             }
-        }catch (Exception e){
-            System.out.println("Failed to find transactions: " + e.getMessage());
         }
 
         return list;
     }
+
 
 }

@@ -3,6 +3,7 @@ package com.packetscope.http;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.packetscope.db.PacketQueryDao;
 import com.packetscope.db.RequestDto;
+import com.packetscope.db.TransactionDto;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -40,7 +41,7 @@ public class SocketHandler  implements HttpHandler {
         try{
             switch(fullPath){
                 case "/api/transactions/execute" -> handleExecute(body, exchange, dao);
-                case "/api/transactions/history" -> handleSavedRequests(exchange, dao);
+                case "/api/transactions/history" -> handleSavedTransactions(exchange, dao);
                 default -> {
                     exchange.sendResponseHeaders(404, -1);
                 }
@@ -121,11 +122,11 @@ public class SocketHandler  implements HttpHandler {
 
     // Inside com.packetscope.http.SocketHandler
 
-    public static void handleSavedRequests(HttpExchange exchange, PacketQueryDao dao) throws Exception {
+    public static void handleSavedTransactions(HttpExchange exchange, PacketQueryDao dao) throws Exception {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        List<RequestDto> list = dao.findAll();
+        List<TransactionDto> list = dao.findAllTransactions();
 
         String payload = mapper.writeValueAsString(list);
         byte[] bytes = payload.getBytes();
@@ -141,20 +142,19 @@ public class SocketHandler  implements HttpHandler {
 }
 
 /* TEST
-https://httpbin.org : This service echoes your request back to you
-https://httpbin.org/get : query parms returned in JSON:
+https://httpbin.org : This service echoes your request back.
+https://httpbin.org/get : Query parms returned in JSON.
 | Key  | Value       |
 | ---- | ----------- |
 | name | packetscope |
 | mode | test        |
-https://httpbin.org/headers : The response will show your custom header.
+https://httpbin.org/headers : The response will show custom header.
 X-Debug: PacketScope
-https://httpbin.org/post : Response will echo the JSON inside
+https://httpbin.org/post : Response will echo the JSON inside.
 Content-Type: application/json
 {
   "tool": "PacketScope",
   "type": "probe",
   "version": 1
 }
-
  */
