@@ -23,12 +23,21 @@ html, body {
     max-width: 1400px;
     margin: auto;
     padding: 30px;
+    position: relative;
 }
 
 .header {
+    position: fixed;
+    top: 0;
+    left: 30px;
+    right: 30px;
+    z-index: 100;
+    width: 95%;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 15px;
+    align-items: center;
+    padding: 15px 0px;
+    box-sizing: border-box;
 }
 
 .title {
@@ -43,9 +52,12 @@ html, body {
 
 .panel {
     background: var(--panel);
+    min-width: 97%;
+    width: fit-content;
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 10px;
     padding: 15px;
+    margin-top: 35px;
     box-shadow: 0 0 40px rgba(0,229,255,0.08);
 }
 
@@ -66,6 +78,10 @@ th {
     font-weight: 500;
 }
 
+tbody tr{
+    font-family:sans-serif, system-ui;
+    letter-spacing:1px;
+}
 tbody tr:hover {
     background: rgba(0,229,255,0.08);
 }
