@@ -14,9 +14,12 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class PacketsHandler implements HttpHandler {
 
+    private static final Logger LOGGER = Logger.getLogger(PacketsHandler.class.getName());
     private final PacketQueryDao dao;
 
     public PacketsHandler(PacketQueryDao dao) {
@@ -25,20 +28,20 @@ public final class PacketsHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange ex) {
-
         try {
             URI uri = ex.getRequestURI();
             Map<String, String> params = parseQuery(uri.getQuery());
 
+            // Validate mandatory 'from' timestamp
             Instant from;
-
             try {
-                from = Instant.parse(params.get("from"));
+                String fromStr = params.get("from");
+                if (fromStr == null) throw new IllegalArgumentException("Missing 'from' parameter");
+                from = Instant.parse(fromStr);
             } catch (Exception e) {
-                ex.sendResponseHeaders(400, -1);
+                sendError(ex, 400);
                 return;
             }
-
 
             Instant lastCapturedAt =
                     params.containsKey("lastCapturedAt")
@@ -50,17 +53,17 @@ public final class PacketsHandler implements HttpHandler {
                             ? Long.parseLong(params.get("lastPacketId"))
                             : null;
 
-            int limit =
-                    params.containsKey("limit")
-                            ? Integer.parseInt(params.get("limit"))
-                            : 200;
-
+            int limit = 200;
+            if (params.containsKey("limit")) {
+                try {
+                    limit = Integer.parseInt(params.get("limit"));
+                } catch (NumberFormatException ignored) {}
+            }
             limit = Math.max(1, Math.min(limit, 500));
 
-
+            // Fetch data from DAO
             List<PacketReadModel> packets =
                     dao.fetchPacketsAfter(from, lastCapturedAt, lastPacketId, limit);
-
 
             byte[] json = Json.write(packets).getBytes(StandardCharsets.UTF_8);
 
@@ -72,11 +75,15 @@ public final class PacketsHandler implements HttpHandler {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
-            try {
-                ex.sendResponseHeaders(500, -1);
-            } catch (Exception ignored) {}
+            LOGGER.log(Level.SEVERE, "Error fetching packets for dashboard", e);
+            sendError(ex, 500);
         }
+    }
+
+    private void sendError(HttpExchange ex, int code) {
+        try {
+            ex.sendResponseHeaders(code, -1);
+        } catch (Exception ignored) {}
     }
 
     private static Map<String, String> parseQuery(String q) {

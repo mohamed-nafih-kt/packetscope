@@ -7,33 +7,52 @@ import com.packetscope.db.Db;
 import com.sun.net.httpserver.HttpServer;
 import java.net.InetSocketAddress;
 import java.sql.Connection;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class MainApp{
 
-    public static void main(String[] args) throws Exception {
-        System.out.println("--- Starting PacketScope Capture Engine ---");
+    private static final Logger LOGGER = Logger.getLogger(MainApp.class.getName());
+    private static final int PORT = 8080;
+    private static final int THREAD_POOL_SIZE = 8;
 
-        // ---- DB ----
-        Db db = new Db();
-        PacketQueryDao dao = new PacketQueryDao(db);
+    public static void main(String[] args){
+        try {
+            // Initialize Persistence Layer
+            Db db = new Db();
+            PacketQueryDao dao = new PacketQueryDao(db);
 
-        try (Connection c = db.get()) {
-            System.out.println("Database connected.");
+            // Health Check
+            try (Connection c = db.get()) {
+                LOGGER.info("Database connectivity established.");
+            }
+            // Server Setup
+            HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
+            server.createContext("/", new StaticHandler());
+            server.createContext("/timeline/protocol-direction", new TimelineProtocolDirectionHandler(dao));
+            server.createContext("/flows", new FlowsHandler(dao));
+            server.createContext("/talkers", new TalkersHandler(dao));
+            server.createContext("/packets", new PacketsHandler(dao));
+            server.createContext("/api/transactions", new SocketHandler(dao));
+
+    //        Static files (index.html, flows.html)
+            ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+            server.setExecutor(executor);
+
+            // Shutdown logic
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                LOGGER.info("Shutting down PacketScope Web...");
+                server.stop(0);
+                executor.shutdownNow();
+            }));
+
+            server.start();
+            LOGGER.info("Web Dashboard active at http://localhost:" + PORT + "/");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Failed to start the Web Application", e);
+            System.exit(1);
         }
-//
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
-        System.out.println("Web listening on " +  server.getAddress().getHostName() + ":" + server.getAddress().getPort());
-
-        server.createContext("/", new StaticHandler("src/main/resources/"));
-        server.createContext("/timeline/protocol-direction", new TimelineProtocolDirectionHandler(dao));
-        server.createContext("/flows", new FlowsHandler(dao));
-        server.createContext("/talkers", new TalkersHandler(dao));
-        server.createContext("/packets", new PacketsHandler(dao));
-        server.createContext("/api/transactions", new SocketHandler(dao));
-        
-//        Static files (index.html, flows.html)
-        server.setExecutor(Executors.newFixedThreadPool(8));
-        server.start();
     }
 }

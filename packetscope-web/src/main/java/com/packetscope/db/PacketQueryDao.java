@@ -7,23 +7,22 @@ import com.packetscope.packetread.PacketRowMapper;
 
 import java.sql.*;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class PacketQueryDao {
 
+    // Reuse mapper to avoid high allocation overhead
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     private final Db db;
 
     public PacketQueryDao(Db db) {
         this.db = db;
     }
 
-    // -------------------------------------------------
-    // PACKETS (cursor pagination)
-    // -------------------------------------------------
-
+    /**
+     * Fetch packets using Keyset (Cursor) Pagination.
+     * Prevents performance degradation on large datasets.
+     */
     public List<PacketReadModel> fetchPacketsAfter(
             Instant from,
             Instant lastCapturedAt,
@@ -31,26 +30,9 @@ public final class PacketQueryDao {
             int limit
     ) throws Exception {
 
-        String sql;
-
-        if (lastCapturedAt == null || lastPacketId == null) {
-            sql = """
-                SELECT *
-                FROM packets
-                WHERE captured_at >= ?
-                ORDER BY captured_at, packet_id
-                LIMIT ?
-            """;
-        } else {
-            sql = """
-                SELECT *
-                FROM packets
-                WHERE captured_at >= ?
-                AND (captured_at > ? OR (captured_at = ? AND packet_id > ?))
-                ORDER BY captured_at, packet_id
-                LIMIT ?
-            """;
-        }
+        String sql = (lastCapturedAt == null || lastPacketId == null)
+                ? "SELECT * FROM packets WHERE captured_at >= ? ORDER BY captured_at, packet_id LIMIT ?"
+                : "SELECT * FROM packets WHERE captured_at >= ? AND (captured_at > ? OR (captured_at = ? AND packet_id > ?)) ORDER BY captured_at, packet_id LIMIT ?";
 
         try (Connection c = db.get();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -58,32 +40,25 @@ public final class PacketQueryDao {
             int i = 1;
             ps.setTimestamp(i++, Timestamp.from(from));
 
-            if (lastCapturedAt != null) {
+            if (lastCapturedAt != null && lastPacketId != null) {
                 ps.setTimestamp(i++, Timestamp.from(lastCapturedAt));
                 ps.setTimestamp(i++, Timestamp.from(lastCapturedAt));
                 ps.setLong(i++, lastPacketId);
             }
-
             ps.setInt(i, limit);
 
-            ResultSet rs = ps.executeQuery();
-
-            List<PacketReadModel> out = new ArrayList<>();
-
-            while (rs.next()) {
-                out.add(PacketRowMapper.map(rs));
+            try (ResultSet rs = ps.executeQuery()) {
+                List<PacketReadModel> out = new ArrayList<>();
+                while (rs.next()) {
+                    out.add(PacketRowMapper.map(rs));
+                }
+                return out;
             }
-
-            return out;
         }
     }
 
-    // -------------------------------------------------
-    // FLOWS
-    // -------------------------------------------------
-
     public List<Map<String, Object>> activeFlows(Instant since) throws Exception {
-
+        // Note: Uses MySQL-specific HEX/CONCAT functions
         String sql = """
             SELECT
               protocol,
@@ -104,65 +79,53 @@ public final class PacketQueryDao {
 
         try (Connection c = db.get();
              PreparedStatement ps = c.prepareStatement(sql)) {
-
             ps.setTimestamp(1, Timestamp.from(since));
-
-            ResultSet rs = ps.executeQuery();
-            return rows(rs);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rows(rs);
+            }
         }
     }
-
-    // -------------------------------------------------
-    // TALKERS
-    // -------------------------------------------------
 
     public List<Map<String, Object>> topTalkers(Instant since) throws Exception {
 
         String sql = """
-            SELECT
-              source_ip AS ip,
-              SUM(packet_size) AS bytes_sent,
-              COUNT(*) AS packets
-            FROM packets
-            WHERE captured_at >= ?
-            GROUP BY source_ip
-            ORDER BY bytes_sent DESC
-            LIMIT 20
-        """;
+                    SELECT
+                      source_ip AS ip,
+                      SUM(packet_size) AS bytes_sent,
+                      COUNT(*) AS packets
+                    FROM packets
+                    WHERE captured_at >= ?
+                    GROUP BY source_ip
+                    ORDER BY bytes_sent DESC
+                    LIMIT 20
+                """;
 
         try (Connection c = db.get();
              PreparedStatement ps = c.prepareStatement(sql)) {
-
             ps.setTimestamp(1, Timestamp.from(since));
-            List<Map<String,Object>> out = rows(ps.executeQuery());
+            try (ResultSet rs = ps.executeQuery()) {
+                List<Map<String, Object>> out = rows(rs);
+                for (Map<String, Object> row : out) {
+                    byte[] raw = (byte[]) row.get("ip");
+                    try {
+                        String ip = java.net.InetAddress
+                                .getByAddress(raw)
+                                .getHostAddress();
 
-            for (Map<String,Object> row : out) {
-                byte[] raw = (byte[]) row.get("ip");
-
-                try {
-                    String ip = java.net.InetAddress
-                            .getByAddress(raw)
-                            .getHostAddress();
-
-                    row.put("ip", ip);
-                } catch (Exception e) {
-                    row.put("ip", "invalid");
+                        row.put("ip", ip);
+                    } catch (Exception e) {
+                        row.put("ip", "0.0.0.0");
+                    }
                 }
-            }
 
-            return out;
+                return out;
+            }
         }
     }
 
-    // -------------------------------------------------
-    // Helper
-    // -------------------------------------------------
-
     private static List<Map<String, Object>> rows(ResultSet rs) throws Exception {
-
         List<Map<String, Object>> list = new ArrayList<>();
         ResultSetMetaData md = rs.getMetaData();
-
         while (rs.next()) {
             Map<String, Object> row = new HashMap<>();
             for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -170,7 +133,6 @@ public final class PacketQueryDao {
             }
             list.add(row);
         }
-
         return list;
     }
 
@@ -221,22 +183,20 @@ public final class PacketQueryDao {
          VALUES (?, ?, ?, ?, ?, ?, ?)
         """;
 
-        ObjectMapper mapper = new ObjectMapper();
 
         try (Connection conn = db.get();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setString(1, method);
             ps.setString(2, url);
-            ps.setString(3, mapper.writeValueAsString(reqHeaders));
+            ps.setString(3, MAPPER.writeValueAsString(reqHeaders));
             ps.setString(4, reqBody);
             ps.setInt(5, status);
-            ps.setString(6, mapper.writeValueAsString(resHeaders));
+            ps.setString(6, MAPPER.writeValueAsString(resHeaders));
             ps.setString(7, resBody);
 
             ps.executeUpdate();
         } catch (JsonProcessingException e) {
-            System.out.println("Failed to save: " + e.getMessage());
+            throw new SQLException("JSON Serialization failed", e);
         }
     }
 

@@ -10,13 +10,14 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class TimelineProtocolDirectionHandler implements HttpHandler {
 
+    private static final Logger LOGGER = Logger.getLogger(TimelineProtocolDirectionHandler.class.getName());
     private final PacketQueryDao dao;
 
     public TimelineProtocolDirectionHandler(PacketQueryDao dao) {
@@ -27,27 +28,32 @@ public final class TimelineProtocolDirectionHandler implements HttpHandler {
     public void handle(HttpExchange ex) {
 
         try {
-            URI uri = ex.getRequestURI();
-            Map<String, String> params = parseQuery(uri.getQuery());
+            Map<String, String> params = parseQuery(ex.getRequestURI().getQuery());
 
-            Instant from = Instant.parse(params.get("from"));
-            Instant to = Instant.parse(params.get("to"));
+            // Provide sensible defaults (last 5 minutes) if params are missing
+            Instant to = params.containsKey("to") ? Instant.parse(params.get("to")) : Instant.now();
+            Instant from = params.containsKey("from") ? Instant.parse(params.get("from")) : to.minus(5, ChronoUnit.MINUTES);
 
             var rows = dao.countPerSecondByProtocolAndDirection(from, to);
 
             Map<String, Map<String, Long>> buckets = new LinkedHashMap<>();
 
             for (var row : rows) {
-
                 String bucket = row.get("bucket").toString();
-                String proto = PacketSemantics.protocolName((Integer) row.get("protocol"));
-                String dir = PacketSemantics.directionName((Integer) row.get("direction"));
 
-                String key = proto + "_" + dir;
+                Object protoObj = row.get("protocol");
+                Object dirObj = row.get("direction");
+                Object countObj = row.get("cnt");
 
-                buckets
-                        .computeIfAbsent(bucket, k -> new HashMap<>())
-                        .merge(key, ((Number) row.get("cnt")).longValue(), Long::sum);
+                if (protoObj instanceof Integer proto && dirObj instanceof Integer dir) {
+                    String protoName = PacketSemantics.protocolName(proto);
+                    String dirName = PacketSemantics.directionName(dir);
+                    String key = protoName + "_" + dirName;
+
+                    buckets
+                            .computeIfAbsent(bucket, k -> new HashMap<>())
+                            .merge(key, ((Number) countObj).longValue(), Long::sum);
+                }
             }
 
             List<Map<String, Object>> result =
@@ -71,11 +77,15 @@ public final class TimelineProtocolDirectionHandler implements HttpHandler {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
-            try {
-                ex.sendResponseHeaders(500, -1);
-            } catch (Exception ignored) {}
+            LOGGER.log(Level.SEVERE, "Timeline data generation failed", e);
+            sendError(ex);
         }
+    }
+
+    private void sendError(HttpExchange ex) {
+        try {
+            ex.sendResponseHeaders(500, -1);
+        } catch (Exception ignored) {}
     }
 
     private static Map<String, String> parseQuery(String q) {
@@ -84,7 +94,7 @@ public final class TimelineProtocolDirectionHandler implements HttpHandler {
 
         for (String part : q.split("&")) {
             String[] kv = part.split("=");
-            if (kv.length == 2) {
+            if (kv.length == 2 && !kv[0].isEmpty()) {
                 map.put(kv[0], kv[1]);
             }
         }

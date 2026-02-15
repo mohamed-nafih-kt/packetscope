@@ -90,3 +90,21 @@ PacketScope Web (analysis + visualization)
 
 This is a hobby / learning project focused on network observability and protocol analysis,
 not a production-grade packet capture engine.
+
+## Test Requests
+
+https://httpbin.org : This service echoes your request back.
+https://httpbin.org/get : Query parms returned in JSON.
+| Key | Value |
+| ---- | ----------- |
+| name | packetscope |
+| mode | test |
+https://httpbin.org/headers : The response will show custom header.
+X-Debug: PacketScope
+https://httpbin.org/post : Response will echo the JSON inside.
+Content-Type: application/json
+{
+"tool": "PacketScope",
+"type": "probe",
+"version": 1
+}

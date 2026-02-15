@@ -13,9 +13,22 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SocketHandler  implements HttpHandler {
+
+    private static final Logger LOGGER =  Logger.getLogger(SocketHandler.class.getName());
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    // Reuse a single HttpClient for connection pooling and resource efficiency
+    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
+            .followRedirects(HttpClient.Redirect.NORMAL)
+            .build();
+
     private final PacketQueryDao dao;
 
     public SocketHandler(PacketQueryDao dao) {
@@ -36,52 +49,51 @@ public class SocketHandler  implements HttpHandler {
         }
 
         String fullPath = exchange.getRequestURI().getPath();
-        String body = new String(exchange.getRequestBody().readAllBytes());
+        byte[] requestBodyBytes = exchange.getRequestBody().readAllBytes();
+        String body = new String(requestBodyBytes, StandardCharsets.UTF_8);
 
         try{
-            switch(fullPath){
-                case "/api/transactions/execute" -> handleExecute(body, exchange, dao);
-                case "/api/transactions/history" -> handleSavedTransactions(exchange, dao);
-                default -> {
-                    exchange.sendResponseHeaders(404, -1);
-                }
+            if (fullPath.endsWith("/execute")) {
+                handleExecute(body, exchange);
+            } else if (fullPath.endsWith("/history")) {
+                handleSavedTransactions(exchange);
+            } else {
+                exchange.sendResponseHeaders(404, -1);
             }
-            }catch (Exception e) {
-                System.err.println("Error handling request: " + e.getMessage());
-                e.printStackTrace();
-                exchange.sendResponseHeaders(500, -1);
-            }
+        }catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Internal error in SocketHandler", e);
+            exchange.sendResponseHeaders(500, -1);
+        }
     }
 
-    public static void handleExecute(String body,  HttpExchange exchange, PacketQueryDao dao) throws Exception {
-
-        // Initialize the Jackson JSON engine to handle data transformation.
-        ObjectMapper mapper = new ObjectMapper();
-
+    public void handleExecute(String body,  HttpExchange exchange) throws Exception {
         // Deserialize the raw JSON 'body' into RequestDto object
-        RequestDto dto  = mapper.readValue(body, RequestDto.class);
+        RequestDto dto  = MAPPER.readValue(body, RequestDto.class);
 
         // Create  HTTP client to act as the "browser", allowing it to send requests to other servers.
-        try (HttpClient client = HttpClient.newHttpClient()){
+        try {
 
             // Initialize a Request Builder with the target URL extracted from your DTO;
             HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(dto.url));
 
-            switch (dto.method) {
+            // Map standard HTTP methods
+            switch (dto.method.toUpperCase()) {
                 case "GET" -> builder.GET();
                 case "POST" -> builder.POST(HttpRequest.BodyPublishers.ofString(dto.body));
                 case "PUT" -> builder.PUT(HttpRequest.BodyPublishers.ofString(dto.body));
                 case "DELETE" -> builder.DELETE();
                 case "PATCH" -> builder.method("PATCH",
                         HttpRequest.BodyPublishers.ofString(dto.body));
+                default -> throw new IllegalArgumentException("Unsupported HTTP Method: " + dto.method);
             }
 
             // Iterate through the headers map and inject them into the request builder.
-            dto.headers.forEach(builder::header);
+            if (dto.headers != null) {
+                dto.headers.forEach(builder::header);
+            }
 
             // SEND the request and get the response
-            HttpResponse<String> upstream =
-                    client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> upstream = HTTP_CLIENT.send(builder.build(), HttpResponse.BodyHandlers.ofString());
 
             dao.saveTransaction(
                     dto.method,
@@ -93,43 +105,32 @@ public class SocketHandler  implements HttpHandler {
                     upstream.body()
             );
 
+            Map<String, Object> result = Map.of(
+                    "status", upstream.statusCode(),
+                    "body", upstream.body(),
+                    "headers", upstream.headers().map()
+            );
 
-            var result = new java.util.HashMap<String, Object>();
-
-            result.put("status", upstream.statusCode());
-            result.put("body", upstream.body());
-            result.put("headers", upstream.headers().map());
-
-            String payload = mapper.writeValueAsString(result);
-
-            byte[] bytes = payload.getBytes();
-
+            byte[] responseBytes = MAPPER.writeValueAsBytes(result);
             exchange.getResponseHeaders().set("Content-Type", "application/json");
-            exchange.sendResponseHeaders(upstream.statusCode(), bytes.length);
+            exchange.sendResponseHeaders(200, responseBytes.length);
 
             // Send the results back to the frontend
             try (OutputStream out = exchange.getResponseBody()) {
-                out.write(bytes);
+                out.write(responseBytes);
             }
         }catch (Exception e) {
-            System.out.println("Error handling request: " + e.getMessage());
-            String payload = "{\"error\":\"" + e.getClass().getSimpleName() + "\"}";
-            byte[] bytes = payload.getBytes();
-            exchange.sendResponseHeaders(502, bytes.length);
-            exchange.getResponseBody().write(bytes);
+            LOGGER.log(Level.WARNING, "Upstream request failed: " + e.getMessage());
+            byte[] errorBytes = MAPPER.writeValueAsBytes(Map.of("error", e.getClass().getSimpleName()));
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            exchange.sendResponseHeaders(502, errorBytes.length);
+            exchange.getResponseBody().write(errorBytes);
         }
     }
 
-    // Inside com.packetscope.http.SocketHandler
-
-    public static void handleSavedTransactions(HttpExchange exchange, PacketQueryDao dao) throws Exception {
-
-        ObjectMapper mapper = new ObjectMapper();
-
+    public void handleSavedTransactions(HttpExchange exchange) throws Exception {
         List<TransactionDto> list = dao.findAllTransactions();
-
-        String payload = mapper.writeValueAsString(list);
-        byte[] bytes = payload.getBytes();
+        byte[] bytes = MAPPER.writeValueAsBytes(list);
 
         exchange.getResponseHeaders().set("Content-Type", "application/json");
         exchange.sendResponseHeaders(200, bytes.length);
@@ -138,23 +139,4 @@ public class SocketHandler  implements HttpHandler {
             out.write(bytes);
         }
     }
-
 }
-
-/* TEST
-https://httpbin.org : This service echoes your request back.
-https://httpbin.org/get : Query parms returned in JSON.
-| Key  | Value       |
-| ---- | ----------- |
-| name | packetscope |
-| mode | test        |
-https://httpbin.org/headers : The response will show custom header.
-X-Debug: PacketScope
-https://httpbin.org/post : Response will echo the JSON inside.
-Content-Type: application/json
-{
-  "tool": "PacketScope",
-  "type": "probe",
-  "version": 1
-}
- */
