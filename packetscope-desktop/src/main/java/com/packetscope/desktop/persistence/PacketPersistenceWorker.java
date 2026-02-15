@@ -4,12 +4,16 @@ import com.packetscope.desktop.model.CapturedPacket;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PacketPersistenceWorker implements Runnable {
 
+    private static final Logger LOGGER = Logger.getLogger(PacketPersistenceWorker.class.getName());
     private static final int BATCH_SIZE = 200;
 
     private final BlockingQueue<CapturedPacket> queue;
@@ -32,20 +36,21 @@ public class PacketPersistenceWorker implements Runnable {
     public void run() {
         try {
             while (running || !queue.isEmpty()) {
-
                 List<CapturedPacket> batch = new ArrayList<>(BATCH_SIZE);
                 queue.drainTo(batch, BATCH_SIZE);
 
                 if (batch.isEmpty()) {
-                    Thread.sleep(10);
+                    Thread.sleep(50);
                     continue;
                 }
 
                 writeBatch(batch);
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOGGER.log(Level.INFO, "Persistence worker interrupted, shutting down...");
         } catch (Exception e) {
-            // log, do not crash app
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Critical error in persistence worker", e);
         }
     }
 
@@ -60,10 +65,12 @@ public class PacketPersistenceWorker implements Runnable {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """;
 
+        boolean autoCommit = connection.getAutoCommit();
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            connection.setAutoCommit(false);
 
             for (CapturedPacket p : batch) {
-                ps.setInt(1, /* current user id */ 1);
+                ps.setInt(1, 1); // Default user context
                 ps.setObject(2, p.timestamp);
                 ps.setInt(3, p.ipVersion);
                 ps.setInt(4, p.protocol.getNumber());
@@ -79,6 +86,12 @@ public class PacketPersistenceWorker implements Runnable {
             }
 
             ps.executeBatch();
+            connection.commit();
+        } catch (SQLException e) {
+            connection.rollback();
+            throw e;
+        } finally {
+            connection.setAutoCommit(autoCommit);
         }
     }
 }

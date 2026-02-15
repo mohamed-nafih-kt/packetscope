@@ -12,17 +12,21 @@ public class ObservablePacketStream {
     private final ObservableList<CapturedPacket> packets = 
             FXCollections.observableArrayList();
     
-    public ObservableList<CapturedPacket> getPackets(){
-            return packets;
+    public ObservableList<CapturedPacket> getPackets() {
+        return packets;
     }
     
-    public void publish(CapturedPacket packet){
-        // Ensures UI-thread safety
+    /**
+     * Publishes a new packet to the observable list.
+     * Ensures UI-thread safety and maintains the maximum buffer size.
+     */
+    public void publish(CapturedPacket packet) {
         Platform.runLater(() -> {
-            packets.add(0, packet);
+            packets.add(packet);
             
-            if(packets.size() > MAX_ITEMS){
-                packets.remove(MAX_ITEMS, packets.size());
+            // Maintain buffer size by removing the oldest packet
+            if (packets.size() > MAX_ITEMS) {
+                packets.remove(0);
             }           
         });
     }

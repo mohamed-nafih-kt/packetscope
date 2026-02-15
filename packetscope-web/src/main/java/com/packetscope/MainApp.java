@@ -31,8 +31,7 @@ public final class MainApp{
         server.createContext("/talkers", new TalkersHandler(dao));
         server.createContext("/packets", new PacketsHandler(dao));
         server.createContext("/api/transactions", new SocketHandler(dao));
-
-//
+        
 //        Static files (index.html, flows.html)
         server.setExecutor(Executors.newFixedThreadPool(8));
         server.start();

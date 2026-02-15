@@ -6,27 +6,25 @@ import java.io.IOException;
 import javafx.animation.PauseTransition;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
-import javafx.scene.*;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.util.Duration;
 import com.packetscope.desktop.view.LoginView;
 
 public class LoginController {
 
     private Stage stage;
-
     private LoginView view;
 
     public LoginController(Stage stage) {
         this.stage = stage;
         this.view = new LoginView();
-//        this.authService = new AuthService();
         attachHandlers();
         stage.setScene(view.getLoginScene());
         stage.show();
     }
 
-    private void attachHandlers() {
-        
+    private void attachHandlers() {       
         view.getLoginBtn().setOnAction(ae -> {
             String user = view.getUserField().getText();
             String pass = view.getPassField().getText();
@@ -36,14 +34,13 @@ public class LoginController {
 
             if (authenticated) {
                 view.getToastMsg().setVisible(false);
-                System.out.println("authenticated");
                 try {
                     loadMainInterface();
                 } catch (Exception ex) {
-                    System.out.println("custom error: " + ex.getMessage());
+                    System.err.println("load interface error: " + ex.getMessage());
                 }
             } else {
-                System.out.println("failed to authenticate");
+                System.err.println("failed to authenticate");
                 view.getToastMsg().setVisible(true);
                 PauseTransition delay = new PauseTransition(Duration.seconds(3));
                 delay.setOnFinished(e -> {
@@ -65,11 +62,10 @@ public class LoginController {
             
             Scene mainScene = new Scene(root);
             stage.setScene(mainScene);
+            stage.centerOnScreen();
             
-            stage.setScene(mainScene);
         } catch (IOException ex) {
-            System.out.println("Error loading main UI: " + ex.getMessage());
-            ex.printStackTrace(); 
+            System.err.println("Critical Error: Unable to load main UI layout. " + ex.getMessage());
         }
     }
 

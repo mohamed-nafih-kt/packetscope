@@ -9,25 +9,25 @@ import java.sql.ResultSet;
 public class LoginDao {
 
     public User getUserDetails(String username) {
-        User user = null;
-        DbConnection dbCon = new DbConnection();
-
-        String sql = "SELECT username, password FROM users WHERE username = ? LIMIT 1";
+        User user = null;       
+        final String sql = "SELECT username, password FROM users WHERE username = ? LIMIT 1";
 
         try (
-            Connection con = dbCon.getConnection(); 
+            Connection con = DbConnection.getInstance().getConnection();
             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, username);  
 
-                ps.setString(1, username);  // safer: prevents SQL injection
-
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                    user = new User(rs.getString("username"), rs.getString("password"));
-                    }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    user = new User(
+                            rs.getString("username"),
+                            rs.getString("password")
+                    );
                 }
+            }
 
         } catch (Exception ex) {
-            System.out.println("loginAuth error: " + ex.getMessage());
+            System.err.println("Database Error (LoginDao):" + ex.getMessage());
         }
 
         return user;
