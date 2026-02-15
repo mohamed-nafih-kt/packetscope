@@ -24,12 +24,12 @@ data.forEach(p => {
         <td>${p.capturedAt}</td>
         <td>${p.sourceIp}</td>
         <td>${p.destinationIp}</td>
-        <td>${p.protocol}</td>
+        <td>${p.protocolName}</td>
         <td>${p.sourcePort ?? ""}</td>
         <td>${p.destinationPort ?? ""}</td>
         <td>${p.packetSize}</td>
         <td>${p.interfaceName}</td>
-        <td>${p.direction}</td>
+        <td>${p.directionName}</td>
     `;
     tbody.prepend(tr);
 

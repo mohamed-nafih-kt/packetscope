@@ -2,6 +2,7 @@ package com.packetscope.http;
 
 import com.packetscope.db.PacketQueryDao;
 import com.packetscope.model.PacketReadModel;
+import com.packetscope.semantic.PacketSemantics;
 import com.packetscope.util.Json;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -29,7 +30,15 @@ public final class PacketsHandler implements HttpHandler {
             URI uri = ex.getRequestURI();
             Map<String, String> params = parseQuery(uri.getQuery());
 
-            Instant from = Instant.parse(params.get("from"));
+            Instant from;
+
+            try {
+                from = Instant.parse(params.get("from"));
+            } catch (Exception e) {
+                ex.sendResponseHeaders(400, -1);
+                return;
+            }
+
 
             Instant lastCapturedAt =
                     params.containsKey("lastCapturedAt")
@@ -44,10 +53,14 @@ public final class PacketsHandler implements HttpHandler {
             int limit =
                     params.containsKey("limit")
                             ? Integer.parseInt(params.get("limit"))
-                            : 1000;
+                            : 200;
+
+            limit = Math.max(1, Math.min(limit, 500));
+
 
             List<PacketReadModel> packets =
                     dao.fetchPacketsAfter(from, lastCapturedAt, lastPacketId, limit);
+
 
             byte[] json = Json.write(packets).getBytes(StandardCharsets.UTF_8);
 
@@ -71,11 +84,12 @@ public final class PacketsHandler implements HttpHandler {
         if (q == null) return map;
 
         for (String part : q.split("&")) {
-            String[] kv = part.split("=");
+            String[] kv = part.split("=", 2);
             if (kv.length == 2) {
                 map.put(kv[0], kv[1]);
             }
         }
         return map;
     }
+
 }

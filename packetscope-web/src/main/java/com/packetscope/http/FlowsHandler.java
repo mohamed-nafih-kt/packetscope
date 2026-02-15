@@ -35,6 +35,8 @@ public final class FlowsHandler implements HttpHandler {
                             ? Integer.parseInt(params.get("seconds"))
                             : 60;
 
+            seconds = Math.max(1, Math.min(seconds, 300));
+
             Instant since = Instant.now().minusSeconds(seconds);
 
             List<Map<String, Object>> flows = dao.activeFlows(since);

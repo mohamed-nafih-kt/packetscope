@@ -1,6 +1,7 @@
 package com.packetscope.packetread;
 
 import com.packetscope.model.PacketReadModel;
+import com.packetscope.semantic.PacketSemantics;
 
 import java.net.InetAddress;
 import java.sql.ResultSet;
@@ -18,11 +19,17 @@ public final class PacketRowMapper {
                 decodeIp(rs.getBytes("source_ip")),
                 decodeIp(rs.getBytes("destination_ip")),
                 rs.getInt("protocol"),
-                (Integer) rs.getObject("source_port"),
-                (Integer) rs.getObject("destination_port"),
+                PacketSemantics.protocolName(rs.getInt("protocol")),
+                rs.getObject("source_port") != null
+                        ? ((Number) rs.getObject("source_port")).intValue()
+                        : null,
+                rs.getObject("destination_port") != null
+                        ? ((Number) rs.getObject("destination_port")).intValue()
+                        : null,
                 rs.getInt("packet_size"),
                 rs.getString("interface_name"),
-                rs.getInt("direction")
+                rs.getInt("direction"),
+                PacketSemantics.directionName(rs.getInt("direction")) // NEW
         );
     }
 

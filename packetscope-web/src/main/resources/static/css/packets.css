@@ -67,6 +67,11 @@ th {
     font-weight: 500;
 }
 
+tbody tr{
+    font-family:sans-serif, system-ui;
+    letter-spacing:1px;
+}
+
 tbody tr:hover {
     background: rgba(124,255,107,0.08);
 }

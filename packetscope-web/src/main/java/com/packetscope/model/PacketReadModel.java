@@ -9,9 +9,11 @@ public record PacketReadModel(
         String sourceIp,
         String destinationIp,
         int protocol,
+        String protocolName,
         Integer sourcePort,
         Integer destinationPort,
         int packetSize,
         String interfaceName,
-        int direction
+        int direction,
+        String directionName
 ) {}
