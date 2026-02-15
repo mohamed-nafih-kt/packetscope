@@ -8,6 +8,7 @@ public class ConfigLoader {
     private static final Properties properties = new Properties();
 
     static {
+        // change to application-dev.properties if using production env
         try (InputStream input = ConfigLoader.class.getClassLoader()
                 .getResourceAsStream("application-dev.properties")) {
             if (input == null) {
