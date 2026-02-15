@@ -88,12 +88,6 @@
                 <version>3.11.0</version>
                 <configuration>
                     <release>21</release>
-                    <nonFilteredFileExtensions>
-                        <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>woff</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>woff2</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>otf</nonFilteredFileExtension>
-                    </nonFilteredFileExtensions>
                 </configuration>
             </plugin>
             
@@ -104,7 +98,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>com.packetscope.desktop.MainApp</mainClass>
+                    <mainClass>com.packetscope.desktop.Main</mainClass>
                 </configuration>
                 <executions>
                     <execution>
@@ -164,7 +158,7 @@
 
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.packetscope.desktop.MainApp</mainClass>
+                                    <mainClass>com.packetscope.desktop.Main</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

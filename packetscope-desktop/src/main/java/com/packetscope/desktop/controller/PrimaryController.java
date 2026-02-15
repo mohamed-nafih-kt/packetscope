@@ -85,6 +85,13 @@ public class PrimaryController {
         PacketWriteQueue writeQueue = new PacketWriteQueue(20);
         packetCaptureService =  new PacketCaptureService(packetStream, writeQueue);
         
+        if (!packetCaptureService.isCaptureAvailable()) {
+            showCaptureError();
+            startButton.setDisable(true);
+            return;
+        }
+
+        
         DbConnection dbConnection = new DbConnection();
         Connection con = dbConnection.getConnection();
         
@@ -103,9 +110,19 @@ public class PrimaryController {
         workerThread.setDaemon(true);
         workerThread.start();
 
-        
-
     }
+    
+    private void showCaptureError() {
+    Alert alert = new Alert(Alert.AlertType.ERROR);
+    alert.setTitle("Packet Capture Unavailable");
+    alert.setHeaderText("Capture driver not detected");
+    alert.setContentText(
+        "PacketScope requires libpcap/Npcap to capture traffic.\n\n" +
+        "Please install Wireshark or Npcap and restart the application."
+    );
+    alert.showAndWait();
+}
+
     
     @FXML
     public void initialize() {

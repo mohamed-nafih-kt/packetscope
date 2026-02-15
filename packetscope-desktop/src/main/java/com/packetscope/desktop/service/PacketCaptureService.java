@@ -65,7 +65,13 @@ public class PacketCaptureService {
         
     private void runCaptureLoop() throws Exception {
 
-        PcapNetworkInterface nif = Pcaps.getDevByName("en0");
+        PcapNetworkInterface nif = selectInterface();
+        
+        if (nif == null) {
+            throw new RuntimeException("No capture interface found");
+        }
+
+        
         int snapshotLength = 65536;
         int readTimeout = 1000;
         
@@ -74,7 +80,10 @@ public class PacketCaptureService {
             String filter = "tcp";
             handle.setFilter(filter, BpfProgram.BpfCompileMode.OPTIMIZE);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.err.println("Packet capture failed. libpcap/Npcap may not be installed or permissions are insufficient.");
+            e.printStackTrace();
+            running = false;
+            return;
         }
         
        
@@ -112,4 +121,22 @@ public class PacketCaptureService {
     public PcapHandle getHandle() {
         return handle;
     }
+    
+    private PcapNetworkInterface selectInterface() throws Exception {
+        for (PcapNetworkInterface dev : Pcaps.findAllDevs()) {
+            if (dev.isLoopBack()) continue;
+            if (!dev.isUp()) continue;
+            return dev;
+        }
+        return null;
+    }
+    public boolean isCaptureAvailable() {
+        try {
+            return !Pcaps.findAllDevs().isEmpty();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
 }
