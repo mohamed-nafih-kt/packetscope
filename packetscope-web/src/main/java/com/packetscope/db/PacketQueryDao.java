@@ -120,7 +120,7 @@ public final class PacketQueryDao {
 
         String sql = """
             SELECT
-              HEX(source_ip) AS ip,
+              source_ip AS ip,
               SUM(packet_size) AS bytes_sent,
               COUNT(*) AS packets
             FROM packets
@@ -134,7 +134,23 @@ public final class PacketQueryDao {
              PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setTimestamp(1, Timestamp.from(since));
-            return rows(ps.executeQuery());
+            List<Map<String,Object>> out = rows(ps.executeQuery());
+
+            for (Map<String,Object> row : out) {
+                byte[] raw = (byte[]) row.get("ip");
+
+                try {
+                    String ip = java.net.InetAddress
+                            .getByAddress(raw)
+                            .getHostAddress();
+
+                    row.put("ip", ip);
+                } catch (Exception e) {
+                    row.put("ip", "invalid");
+                }
+            }
+
+            return out;
         }
     }
 

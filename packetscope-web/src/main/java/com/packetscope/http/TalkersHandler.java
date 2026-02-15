@@ -30,9 +30,18 @@ public final class TalkersHandler implements HttpHandler {
             URI uri = ex.getRequestURI();
             String q = uri.getQuery();
 
-            if (q != null && q.startsWith("seconds=")) {
-                seconds = Integer.parseInt(q.substring(8));
+            if (q != null) {
+                for (String part : q.split("&")) {
+                    if (part.startsWith("seconds=")) {
+                        try {
+                            seconds = Integer.parseInt(part.substring(8));
+                        } catch (NumberFormatException ignored) {}
+                        break;
+                    }
+                }
             }
+
+            seconds = Math.max(1, Math.min(seconds, 300));
 
             List<Map<String, Object>> rows =
                     dao.topTalkers(Instant.now().minusSeconds(seconds));
