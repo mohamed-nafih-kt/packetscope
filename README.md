@@ -1,110 +1,412 @@
-## 🛰️ Project Objective: PacketScope
-
-**PacketScope** is a high-performance, distributed network analysis suite designed to provide real-time visibility into local and remote network traffic. Unlike standard "all-in-one" apps, PacketScope uses a **decoupled, systems-level architecture** to separate the high-stakes task of packet capture from the resource-intensive task of data visualization.
-
-### 🎯 Core Aims
-
-- **Low-Level Capture Engine:** To build a lightweight Desktop Agent (Java 21/JavaFX) that interacts directly with the OS network stack via **Pcap4J** and **libpcap** to sniff raw Ethernet frames.
-- **System Architecture over Frameworks:** To demonstrate mastery of **Pure Java** fundamentals by manually handling concurrency, socket programming, and database connectivity (JDBC), intentionally avoiding high-level abstractions like Spring or Hibernate.
-- **Distributed Telemetry:** To implement a persistent storage pipeline where captured packet metadata is transformed from binary to structured data and stored in a **MySQL** database for historical analysis.
-- **Interactive Web Dashboard:** To provide a decoupled Web Interface (React/Java `HttpServer`) that allows users to analyze traffic remotely and perform **Manual Packet Injection** via a custom Request Composer.
-
----
-
-### 🛠️ Technical Pillars (What you're proving)
-
-1. **Concurrency:** Managing the "Producer-Consumer" problem where one thread captures packets while another updates the UI and a third writes to the DB.
-2. **Protocol Dissection:** Manually parsing Hex/Binary data into readable IPv4/IPv6, TCP, and UDP structures.
-3. **Resource Efficiency:** Building an "Enterprise-grade" tool with a minimal footprint by using native Java components (`HttpServer`, `Properties`, `Record` classes).
-
----
-
-### 📝 The "Resume Summary"
-
-> _"Developed **PacketScope**, a modular network analysis tool using Java 21. Engineered a multi-threaded desktop capture agent utilizing Pcap4J for raw socket access and a custom lightweight web backend using native Java HttpServer. Focused on bit-level data transformation, manual JDBC resource management, and decoupled systems architecture to provide a high-performance alternative to framework-heavy monitoring solutions."_
-
----
-
-## 🛰️ Project Objective: PacketScope
-
-**PacketScope** is a high-performance, distributed network analysis suite designed to provide real-time visibility into local and remote network traffic. Unlike standard "all-in-one" apps, PacketScope uses a **decoupled, systems-level architecture** to separate the high-stakes task of packet capture from the resource-intensive task of data visualization.
-
-### 🎯 Core Aims
-
-- **Low-Level Capture Engine:** To build a lightweight Desktop Agent (Java 21/JavaFX) that interacts directly with the OS network stack via **Pcap4J** and **libpcap** to sniff raw Ethernet frames.
-- **System Architecture over Frameworks:** To demonstrate mastery of **Pure Java** fundamentals by manually handling concurrency, socket programming, and database connectivity (JDBC), intentionally avoiding high-level abstractions like Spring or Hibernate.
-- **Distributed Telemetry:** To implement a persistent storage pipeline where captured packet metadata is transformed from binary to structured data and stored in a **MySQL** database for historical analysis.
-- **Interactive Web Dashboard:** To provide a decoupled Web Interface (React/Java `HttpServer`) that allows users to analyze traffic remotely and perform **Manual Packet Injection** via a custom Request Composer.
-
----
-
-### 🛠️ Technical Pillars (What you're proving)
-
-1. **Concurrency:** Managing the "Producer-Consumer" problem where one thread captures packets while another updates the UI and a third writes to the DB.
-2. **Protocol Dissection:** Manually parsing Hex/Binary data into readable IPv4/IPv6, TCP, and UDP structures.
-3. **Resource Efficiency:** Building an "Enterprise-grade" tool with a minimal footprint by using native Java components (`HttpServer`, `Properties`, `Record` classes).
-
----
-
-### 📝 The "Resume Summary" (Copy this!)
-
-> _"Developed **PacketScope**, a modular network analysis tool using Java 21. Engineered a multi-threaded desktop capture agent utilizing Pcap4J for raw socket access and a custom lightweight web backend using native Java HttpServer. Focused on bit-level data transformation, manual JDBC resource management, and decoupled systems architecture to provide a high-performance alternative to framework-heavy monitoring solutions."_
-
----
+![Java](https://img.shields.io/badge/Java-21-blue)
+![Platform](https://img.shields.io/badge/Platform-Desktop%20%2B%20Web-green)
+![License](https://img.shields.io/badge/License-MIT-brightgreen)
 
 # PacketScope
 
-PacketScope is a two-part network observability project consisting of:
+PacketScope is a full-stack local network telemetry and inspection platform that combines **real-time packet capture**, **persistent flow analytics**, and a **web-based monitoring dashboard**.
 
-- **PacketScope Desktop**  
-  A JavaFX-based desktop agent that captures live network traffic using libpcap (via pcap4j),
-  decodes packets, and persists them locally.
+It is designed for developers and engineers who want deep visibility into live traffic, protocol behavior, and HTTP transactions without relying on heavyweight external observability platforms.
 
-- **PacketScope Web**  
-  A web application that visualizes captured packets, flows, talkers, and timelines,
-  providing protocol semantics and replay-oriented observability.
+PacketScope operates entirely locally and favors explicit control over abstractions.
 
-## Architecture Overview
+**The system consists of:**
+
+- A JavaFX desktop agent for packet capture and ingestion
+- A high-performance persistence layer (batched SQL writes)
+- A minimal Java HTTP server exposing analytics endpoints
+- A modern web dashboard for visualization and request inspection
+
+---
+
+## High-Level Architecture
+
+PacketScope consists of two primary components:
+
+### Desktop Capture Agent
+
+Responsible for:
+
+- Live packet capture via libpcap / Npcap (Pcap4J)
+- Protocol decoding (IPv4 / IPv6)
+- TCP / UDP transport parsing
+- Direction classification (Inbound / Outbound)
+- Buffered UI streaming
+- Batched database persistence
+
+Pipeline:
 
 ```
-NIC
+
+Network Interface
 ↓
-libpcap / Npcap (installed via Wireshark)
+Pcap Capture Thread
 ↓
-pcap4j
+PacketDecoder
 ↓
-PacketScope Desktop (capture + persistence)
+ObservablePacketStream (UI)
 ↓
-Database
+PacketWriteQueue
 ↓
-PacketScope Web (analysis + visualization)
+PacketPersistenceWorker (batched SQL writes)
+
 ```
 
-## Requirements
+Key characteristics:
 
-- Java 17+
-- libpcap / Npcap  
-  (Installing Wireshark satisfies this dependency)
+- Dedicated capture thread
+- UI-safe observable packet stream
+- Bounded persistence queue with drop tracking
+- Transactional batch inserts
+- Clean pcap lifecycle ownership
 
-## Notes
+---
 
-This is a hobby / learning project focused on network observability and protocol analysis,
-not a production-grade packet capture engine.
+### Web Analytics Server
 
-## Test Requests
+A lightweight Java HTTP server exposing:
 
-https://httpbin.org : This service echoes your request back.
-https://httpbin.org/get : Query parms returned in JSON.
-| Key | Value |
-| ---- | ----------- |
-| name | packetscope |
-| mode | test |
-https://httpbin.org/headers : The response will show custom header.
-X-Debug: PacketScope
-https://httpbin.org/post : Response will echo the JSON inside.
-Content-Type: application/json
-{
-"tool": "PacketScope",
-"type": "probe",
-"version": 1
-}
+- Timeline analytics (protocol × direction)
+- Active flows
+- Top talkers
+- Raw packet telemetry
+- HTTP transaction inspection
+- Saved request replay
+
+Endpoints are backed by optimized SQL queries using:
+
+- Keyset pagination (no OFFSET scans)
+- Flow normalization
+- Time-bucket aggregation
+- JSON-based transaction logging
+- Static frontend (HTML / CSS / JS)
+
+No frameworks. No ORMs. No middleware.
+
+---
+
+### System Architecture and Data Flow
+
+```mermaid
+
+graph TD
+    A[Network Interface Card] -->|Raw Packets| B(Pcap Capture Thread)
+    B -->|JNI / Pcap4J| C{PacketDecoder}
+
+    subgraph "Desktop Agent"
+    C -->|Decoded Object| D[ObservablePacketStream]
+    D -->|Real-time Update| E[JavaFX UI Table]
+    C -->|Enqueues| F[PacketWriteQueue]
+    end
+
+    subgraph "Persistence Pipeline"
+    F -->|Bounded Buffer| G[PacketPersistenceWorker]
+    G -->|Batched SQL| H[(MySQL Database)]
+    end
+
+    subgraph "Web Dashboard"
+    H -->|Keyset Pagination| I[PacketQueryDao]
+    I -->|JSON API| J[Web Frontend]
+    end
+
+```
+
+---
+
+## Features
+
+### Packet Telemetry
+
+- TCP capture
+- IPv4 / IPv6 support
+- Source / destination ports
+- Interface awareness
+- Direction classification via local IP resolution
+
+### Persistence
+
+- Batched inserts (200 packets / transaction)
+- Manual commit / rollback
+- Cursor-based reads
+- Flow aggregation
+- Top talker computation
+
+### Dashboard
+
+- Protocol × direction timeline (Chart.js)
+- Active flows
+- Top talkers
+- Raw packet list
+- HTTP request composer
+- Transaction history
+- Replay support
+
+### Request Inspection
+
+- Custom HTTP requests
+- Header/body editing
+- Response capture
+- Persistent transaction logs
+- Replayable saved requests
+
+---
+
+## Technology Stack
+
+### Backend / Desktop
+
+- Java 21
+- JavaFX
+- Pcap4J
+- JDBC
+- Embedded Java HTTP server
+- MySQL-compatible database
+
+### Frontend
+
+- Vanilla HTML / CSS / JavaScript
+- Chart.js (timeline visualization)
+
+No frontend frameworks.
+
+---
+
+## Project Structure (High Level)
+
+```
+packetscope/
+│
+├── packetscope-desktop/
+│     ├─ controller/
+│     ├─ model/
+│     ├─ persistence/
+│     ├─ repository/
+│     ├─ service/
+│     ├─ view/
+│     └─ resources/
+│         ├─ fxml/
+│         ├─ styles/
+│         └─ images/
+│
+│
+└── packetscope-web/
+      ├─ http/
+      ├─ controller/
+      ├─ db/
+      ├─ model/
+      ├─ service/
+      ├─ util/
+      └─ resources/
+          ├─ static/
+          └─ templates/
+
+```
+
+---
+
+## Screenshots
+
+> screenshots:
+
+```markdown
+### Desktop Capture Agent
+
+![Desktop](resources/screenshots/desktop.png)
+
+### Protocol × Direction Timeline
+
+![Timeline](resources/screenshots/timeline.png)
+
+### Active Flows
+
+![Flows](resources/screenshots/flows.png)
+
+### Top Talkers
+
+![Talkers](resources/screenshots/talkers.png)
+
+### Raw Packets
+
+![Packets](resources/screenshots/packets.png)
+
+### Request Inspector
+
+![Requests](resources/screenshots/web-requests.png)
+```
+
+---
+
+## Database
+
+PacketScope expects the following primary tables:
+
+### packets
+
+Stores:
+
+- captured_at
+- ip_version
+- protocol
+- source_ip
+- destination_ip
+- source_port
+- destination_port
+- packet_size
+- interface_name
+- direction
+
+### transaction_logs
+
+Stores:
+
+- HTTP method
+- URL
+- request headers/body (JSON)
+- response status
+- response headers/body
+- timestamps
+
+---
+
+## Configuration
+
+Desktop uses environment-based config:
+
+```
+config.properties
+config-prod.properties
+```
+
+Selected via:
+
+```bash
+-Denv=prod
+```
+
+Example:
+
+```
+db.url=jdbc:mysql://localhost:3306/packetscope
+db.user=root
+db.password=yourpassword
+```
+
+Web server uses:
+
+```
+application.properties
+application-prod.properties
+```
+
+---
+
+## Running
+
+### Desktop Agent
+
+Requires:
+
+- Npcap / libpcap
+- Active network interface
+- Database access
+
+Start:
+
+```bash
+java -jar packetscope-desktop.jar
+```
+
+---
+
+### Web Server
+
+Start:
+
+```bash
+java -jar packetscope-web.jar
+```
+
+Dashboard:
+
+```
+http://localhost:8080
+```
+
+---
+
+## Design Philosophy
+
+PacketScope intentionally favors:
+
+- Explicit threads over frameworks
+- SQL over ORMs
+- Native packet access
+- Simple HTTP servers
+- Local-first operation
+
+This is not a cloud observability platform.
+
+It is a developer-side inspection engine.
+
+---
+
+## Limitations
+
+- TCP only (currently, can be configured to use other protocols)
+- Single-user context
+- Local deployment
+- MySQL-oriented SQL
+- No authentication layer (by design)
+
+---
+
+## Prerequisites & Installation
+
+### 1. Packet Capture Drivers
+
+Because PacketScope accesses the Network Link Layer, you must have the appropriate drivers installed to allow the JVM to interface with your hardware:
+
+- **Windows**: Install **[Npcap](https://npcap.com/)**.
+  - _Crucial:_ During installation, ensure you check the box: **"Install Npcap in WinPcap API-compatible Mode"**.
+- **macOS**: Uses the native **libpcap** (usually pre-installed).
+- **Linux**: Install **libpcap** (e.g., `sudo apt-get install libpcap-dev`).
+
+### 2. Permissions (The "Raw Socket" Problem)
+
+Capturing live packets requires elevated privileges. To avoid the security risk of running the entire application as `root` or `Administrator`, use the following configurations:
+
+- **Linux**: Grant the Java binary the specific capability to capture packets without sudo:
+  ```bash
+  sudo setcap cap_net_raw,cap_net_admin=eip /path/to/your/java_home/bin/java
+  ```
+- **Windows**: Ensure the user running the app has administrative privileges, or that Npcap was installed with the "Restrict Npcap driver access to Administrators only" option **unchecked**.
+
+### 3. Database Setup
+
+PacketScope is optimized for **MySQL/MariaDB**.
+
+1.  Create a database named `packetscope`.
+2.  Execute the schema scripts located in: `/packetscope/resources/schema.sql`.
+3.  Configure your credentials in `config.properties` (Desktop) and `application.properties` (Web).
+
+### 4. Build & Run
+
+The project uses Maven for dependency management and build automation.
+
+```bash
+# Build the entire project
+mvn clean install
+
+# Run the Desktop Agent
+java -jar packetscope-desktop/target/packetscope-desktop.jar
+
+# Run the Web Dashboard
+java -jar packetscope-web/target/packetscope-web.jar
+
+```
+
+---
+
+## License
+
+MIT
