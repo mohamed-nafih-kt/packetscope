@@ -208,7 +208,7 @@ packetscope/
 
 ### Desktop Capture Agent
 
-![Desktop](.resources/screenshots/desktop.png)
+![Desktop](/resources/screenshots/desktop.png)
 
 ### Protocol × Direction Timeline
 
