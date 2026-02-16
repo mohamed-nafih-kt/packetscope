@@ -206,33 +206,29 @@ packetscope/
 
 ## Screenshots
 
-> screenshots:
-
-```markdown
 ### Desktop Capture Agent
 
-![Desktop](resources/screenshots/desktop.png)
+![Desktop](.resources/screenshots/desktop.png)
 
 ### Protocol × Direction Timeline
 
-![Timeline](resources/screenshots/timeline.png)
+![Timeline](/resources/screenshots/timeline.png)
 
 ### Active Flows
 
-![Flows](resources/screenshots/flows.png)
+![Flows](/resources/screenshots/flows.png)
 
 ### Top Talkers
 
-![Talkers](resources/screenshots/talkers.png)
+![Talkers](/resources/screenshots/talkers.png)
 
 ### Raw Packets
 
-![Packets](resources/screenshots/packets.png)
+![Packets](/resources/screenshots/packets.png)
 
 ### Request Inspector
 
-![Requests](resources/screenshots/web-requests.png)
-```
+![Requests](/resources/screenshots/web-requests.png)
 
 ---
 
